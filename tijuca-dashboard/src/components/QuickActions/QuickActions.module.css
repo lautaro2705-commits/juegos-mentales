@@ -1,0 +1,89 @@
+/* Quick Actions */
+.container {
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin: 0 0 12px 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px 20px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btnIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnLabel {
+  white-space: nowrap;
+}
+
+/* Primary: New File */
+.btnPrimary {
+  background: #4f46e5;
+  color: #fff;
+}
+
+.btnPrimary:hover {
+  background: #4338ca;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+}
+
+/* Secondary: Quick Payment */
+.btnSecondary {
+  background: #fff;
+  color: #10b981;
+  border-color: #10b981;
+}
+
+.btnSecondary:hover {
+  background: #ecfdf5;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.2);
+}
+
+/* Tertiary: Search */
+.btnTertiary {
+  background: #fff;
+  color: #6366f1;
+  border-color: #e5e7eb;
+}
+
+.btnTertiary:hover {
+  border-color: #6366f1;
+  background: #eef2ff;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.15);
+}

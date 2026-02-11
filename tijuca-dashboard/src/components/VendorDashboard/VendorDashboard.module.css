@@ -1,0 +1,102 @@
+/* Vendor Dashboard Layout */
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.pageTitle {
+  font-size: 26px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.pageSubtitle {
+  font-size: 14px;
+  color: #9ca3af;
+  margin: 4px 0 0;
+  text-transform: capitalize;
+}
+
+.refreshBtn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  transition: all 0.15s;
+}
+
+.refreshBtn:hover {
+  background: #f9fafb;
+  color: #4f46e5;
+  border-color: #c7d2fe;
+}
+
+.refreshBtn:active {
+  transform: rotate(180deg);
+}
+
+/* Error state */
+.errorCard {
+  text-align: center;
+  padding: 48px 24px;
+  background: #fff;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  margin-top: 40px;
+}
+
+.errorCard h2 {
+  font-size: 18px;
+  color: #dc2626;
+  margin: 0 0 8px;
+}
+
+.errorCard p {
+  color: #6b7280;
+  margin: 0 0 20px;
+}
+
+.retryBtn {
+  padding: 10px 24px;
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.retryBtn:hover {
+  background: #4338ca;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .page {
+    padding: 16px 12px 32px;
+  }
+
+  .pageTitle {
+    font-size: 22px;
+  }
+}

@@ -1,0 +1,50 @@
+╔══════════════════════════════════════════════════════════════════╗
+║          ESTRUCTURA DEL PROYECTO FUTBOLPRO                       ║
+╚══════════════════════════════════════════════════════════════════╝
+
+FutbolProXcode/
+│
+├── INSTRUCCIONES_XCODE.md    ← LEE ESTO PRIMERO
+├── LEEME_PRIMERO.txt
+├── README.md
+├── QUICKSTART.md
+├── ARCHITECTURE.md
+├── PROJECT_SUMMARY.md
+├── FILE_INDEX.md
+│
+└── FutbolPro/
+    ├── Shared/                (iOS + Watch targets)
+    │   ├── Match.swift
+    │   ├── MatchViewModel.swift
+    │   ├── HealthKitManager.swift
+    │   └── WatchConnectivityManager.swift
+    │
+    ├── iOS/                   (Solo iOS target)
+    │   ├── FutbolProApp.swift
+    │   ├── ContentView.swift
+    │   ├── MatchSetupView.swift
+    │   ├── MatchDashboardView.swift
+    │   ├── MatchHistoryView.swift
+    │   ├── Extensions.swift
+    │   └── Info.plist
+    │
+    ├── Watch/                 (Solo Watch target)
+    │   ├── WatchApp.swift
+    │   ├── WatchMatchView.swift
+    │   ├── WatchMatchViewModel.swift
+    │   ├── WatchConnectivityManager+Watch.swift
+    │   └── Info.plist
+    │
+    └── FutbolPro.entitlements
+
+════════════════════════════════════════════════════════════════════
+
+PRÓXIMOS PASOS:
+
+1. Abre Xcode
+2. Crea un nuevo proyecto iOS App con nombre "FutbolPro"
+3. Agrega Watch App target
+4. Sigue las instrucciones en INSTRUCCIONES_XCODE.md
+5. Copia los archivos de este directorio al proyecto Xcode
+
+════════════════════════════════════════════════════════════════════
