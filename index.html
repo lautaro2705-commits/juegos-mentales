@@ -218,8 +218,8 @@
 
         .crossword-grid {
             display: grid;
-            grid-template-columns: repeat(8, 55px);
-            grid-template-rows: repeat(8, 55px);
+            grid-template-columns: repeat(10, 55px);
+            grid-template-rows: repeat(10, 55px);
             gap: 2px;
             background-color: #D1D5DB;
             padding: 2px;
@@ -743,8 +743,8 @@
             }
 
             .crossword-grid {
-                grid-template-columns: repeat(8, 48px);
-                grid-template-rows: repeat(8, 48px);
+                grid-template-columns: repeat(10, 45px);
+                grid-template-rows: repeat(10, 45px);
             }
 
             .minesweeper-grid {
@@ -767,7 +767,7 @@
     <main>
         <!-- CRUCIGRAMA 8x8 -->
         <section id="crossword" class="game-container">
-            <h2 class="game-title">Crucigrama Avanzado 8×8</h2>
+            <h2 class="game-title">Crucigrama Avanzado 10×10</h2>
             <div class="crossword-layout">
                 <div class="crossword-grid" id="crosswordGrid"></div>
                 <div class="clues-panel">
@@ -893,26 +893,29 @@
         });
 
         // ============================================
-        // CRUCIGRAMA 8x8 AVANZADO
+        // CRUCIGRAMA 10x10 AVANZADO
         // ============================================
         const crosswordData = {
             grid: [
-                [' ', ' ', 'C', 'U', 'L', 'T', 'U', 'R', 'A'],
-                [' ', ' ', 'O', ' ', ' ', ' ', ' ', ' ', ' '],
-                ['F', 'I', 'L', 'O', 'S', 'O', 'F', 'I', 'A'],
-                [' ', ' ', 'O', ' ', ' ', ' ', ' ', 'D', ' '],
+                [' ', ' ', 'M', 'A', 'T', 'E', 'M', 'A', 'T', 'I', 'C', 'A'],
+                [' ', ' ', 'E', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                [' ', ' ', 'T', ' ', 'F', 'I', 'L', 'O', 'S', 'O', 'F', 'I', 'A'],
+                [' ', ' ', 'A', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                ['H', 'I', 'S', 'T', 'O', 'R', 'I', 'A', ' ', ' ', ' '],
+                [' ', ' ', 'I', ' ', ' ', ' ', ' ', 'R', ' ', ' ', ' '],
+                [' ', 'A', 'S', 'T', 'R', 'O', 'N', 'O', 'M', 'I', 'A'],
+                [' ', ' ', 'C', ' ', ' ', ' ', ' ', 'N', ' ', ' ', ' '],
                 [' ', 'L', 'I', 'T', 'E', 'R', 'A', 'T', 'U', 'R', 'A'],
-                [' ', ' ', 'M', ' ', ' ', ' ', ' ', 'O', ' '],
-                [' ', ' ', 'B', ' ', ' ', ' ', ' ', 'R', ' '],
-                ['C', 'I', 'E', 'N', 'C', 'I', 'A', ' ', ' ']
+                [' ', ' ', 'A', ' ', ' ', ' ', ' ', 'E', ' ', ' ', ' ']
             ],
             words: [
-                { word: 'CULTURA', row: 0, col: 2, dir: 'H', num: 1, clue: 'Conjunto de conocimientos y manifestaciones artísticas de un pueblo' },
-                { word: 'FILOSOFIA', row: 2, col: 0, dir: 'H', num: 2, clue: 'Ciencia que estudia la esencia, propiedades y causas de las cosas' },
-                { word: 'LITERATURA', row: 4, col: 1, dir: 'H', num: 3, clue: 'Arte que emplea la palabra como medio de expresión' },
-                { word: 'CIENCIA', row: 7, col: 0, dir: 'H', num: 4, clue: 'Conocimiento sistemático basado en el método científico' },
-                { word: 'COLOMBIA', row: 0, col: 2, dir: 'V', num: 5, clue: 'País suramericano de Gabriel García Márquez' },
-                { word: 'IDIOTOR', row: 2, col: 7, dir: 'V', num: 6, clue: 'Idioma particular de una región o comunidad (sin la última letra)' }
+                { word: 'MATEMATICA', row: 0, col: 2, dir: 'H', num: 1, clue: 'Ciencia del razonamiento lógico y las relaciones cuantitativas' },
+                { word: 'FILOSOFIA', row: 2, col: 4, dir: 'H', num: 2, clue: 'Estudio de problemas fundamentales sobre la existencia, el conocimiento y la ética' },
+                { word: 'HISTORIA', row: 4, col: 0, dir: 'H', num: 3, clue: 'Disciplina que estudia y narra cronológicamente los acontecimientos del pasado' },
+                { word: 'ASTRONOMIA', row: 6, col: 1, dir: 'H', num: 4, clue: 'Ciencia que estudia los cuerpos celestes y el universo' },
+                { word: 'LITERATURA', row: 8, col: 1, dir: 'H', num: 5, clue: 'Arte de la expresión escrita o hablada, especialmente con valor estético' },
+                { word: 'METAFISICA', row: 0, col: 2, dir: 'V', num: 6, clue: 'Rama de la filosofía que estudia la naturaleza de la realidad' },
+                { word: 'ARTE', row: 6, col: 1, dir: 'V', num: 7, clue: 'Manifestación de la actividad humana mediante la cual se expresa la belleza' }
             ]
         };
 
@@ -929,9 +932,9 @@
             verticalClues.innerHTML = '';
             crosswordState = {};
 
-            // Crear grid 8x8
-            for (let i = 0; i < 8; i++) {
-                for (let j = 0; j < 8; j++) {
+            // Crear grid 10x10
+            for (let i = 0; i < 10; i++) {
+                for (let j = 0; j < 10; j++) {
                     const cell = document.createElement('div');
                     const letter = crosswordData.grid[i][j];
 
