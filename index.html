@@ -762,15 +762,20 @@
             <button class="game-btn" data-game="differences">🔍 10 Diferencias</button>
             <button class="game-btn" data-game="minesweeper">💎 Buscaminas</button>
         </div>
-        <div style="text-align: center; margin-top: 16px;">
-            <label style="font-size: 20px; font-weight: 600; color: #2563EB; margin-right: 12px;">Nivel:</label>
-            <select id="levelSelector" style="font-size: 20px; padding: 12px 24px; border: 3px solid #2563EB; border-radius: 8px; background: white; color: #2563EB; font-weight: 600; cursor: pointer;">
-                <option value="1">Nivel 1 - Ciencias</option>
-                <option value="2">Nivel 2 - Cultura</option>
-                <option value="3">Nivel 3 - Geografía</option>
-                <option value="4">Nivel 4 - Historia</option>
-                <option value="5">Nivel 5 - Arte</option>
-            </select>
+        <div style="text-align: center; margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <div style="font-size: 22px; font-weight: 700; color: #2563EB; background: #DBEAFE; padding: 12px 24px; border-radius: 8px; border: 3px solid #2563EB;">
+                🗓️ <span id="dailyLevelDisplay">Nivel del día</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <label style="font-size: 18px; font-weight: 600; color: #6B7280;">Cambiar nivel:</label>
+                <select id="levelSelector" style="font-size: 18px; padding: 10px 20px; border: 2px solid #6B7280; border-radius: 8px; background: white; color: #6B7280; font-weight: 600; cursor: pointer;">
+                    <option value="1">Nivel 1 - Ciencias</option>
+                    <option value="2">Nivel 2 - Cultura</option>
+                    <option value="3">Nivel 3 - Geografía</option>
+                    <option value="4">Nivel 4 - Historia</option>
+                    <option value="5">Nivel 5 - Arte</option>
+                </select>
+            </div>
         </div>
     </header>
 
@@ -861,7 +866,15 @@
         // ESTADO GLOBAL
         // ============================================
         let currentGame = 'crossword';
-        let currentLevel = 1;
+
+        // Calcular nivel del día automáticamente
+        function getDailyLevel() {
+            const today = new Date();
+            const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
+            return (dayOfYear % 5) + 1; // Cicla entre niveles 1-5
+        }
+
+        let currentLevel = getDailyLevel();
 
         // ============================================
         // UTILIDADES GENERALES
@@ -903,6 +916,27 @@
             });
         });
 
+        // Actualizar display del nivel diario
+        function updateDailyLevelDisplay() {
+            const levelNames = {
+                1: 'Nivel 1 - Ciencias',
+                2: 'Nivel 2 - Cultura',
+                3: 'Nivel 3 - Geografía',
+                4: 'Nivel 4 - Historia',
+                5: 'Nivel 5 - Arte'
+            };
+
+            const today = new Date().toLocaleDateString('es-ES', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            document.getElementById('dailyLevelDisplay').innerHTML =
+                `${levelNames[currentLevel]}<br><span style="font-size: 16px; font-weight: 500;">${today}</span>`;
+        }
+
         // Selector de niveles
         document.getElementById('levelSelector').addEventListener('change', function() {
             currentLevel = parseInt(this.value);
@@ -913,6 +947,7 @@
             initDifferences();
             initMinesweeper();
 
+            updateDailyLevelDisplay();
             showMessage(`¡Nivel ${currentLevel} cargado! Nuevo desafío disponible`);
         });
 
@@ -1689,10 +1724,23 @@
         // INICIALIZACIÓN
         // ============================================
         document.addEventListener('DOMContentLoaded', () => {
+            // Configurar selector de nivel con el nivel diario
+            document.getElementById('levelSelector').value = currentLevel;
+            updateDailyLevelDisplay();
+
             initCrossword();
             initDifferences();
             initMinesweeper();
-            showMessage(MESSAGES.welcome);
+
+            const levelNames = {
+                1: 'Ciencias',
+                2: 'Cultura',
+                3: 'Geografía',
+                4: 'Historia',
+                5: 'Arte'
+            };
+
+            showMessage(`¡Bienvenido! Hoy te toca: ${levelNames[currentLevel]} 🎯`);
         });
     </script>
 </body>
