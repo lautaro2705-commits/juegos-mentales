@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juegos Mentales - Diversión y Ejercicio Cerebral</title>
+    <title>Juegos Mentales - Desafío Avanzado</title>
     <style>
         /* ============================================
            VARIABLES CSS Y RESET
@@ -45,7 +45,7 @@
             font-size: var(--fuente-base);
             line-height: 1.6;
             padding: var(--espaciado-lg);
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
@@ -207,7 +207,7 @@
         }
 
         /* ============================================
-           CRUCIGRAMA
+           CRUCIGRAMA 8x8
            ============================================ */
         .crossword-layout {
             display: grid;
@@ -218,8 +218,8 @@
 
         .crossword-grid {
             display: grid;
-            grid-template-columns: repeat(6, 60px);
-            grid-template-rows: repeat(6, 60px);
+            grid-template-columns: repeat(8, 55px);
+            grid-template-rows: repeat(8, 55px);
             gap: 2px;
             background-color: #D1D5DB;
             padding: 2px;
@@ -245,7 +245,7 @@
             height: 100%;
             border: none;
             text-align: center;
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 700;
             text-transform: uppercase;
             background-color: transparent;
@@ -267,17 +267,20 @@
             position: absolute;
             top: 2px;
             left: 4px;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 700;
             color: var(--color-primario);
         }
 
         .clues-panel {
-            min-width: 300px;
+            min-width: 350px;
+            max-width: 400px;
             background-color: #F9FAFB;
             padding: var(--espaciado-lg);
             border-radius: var(--radio-borde);
             border: 2px solid #E5E7EB;
+            max-height: 600px;
+            overflow-y: auto;
         }
 
         .clues-section {
@@ -323,8 +326,8 @@
         }
 
         .house-container {
-            width: 400px;
-            height: 500px;
+            width: 450px;
+            height: 550px;
             position: relative;
             border: 3px solid var(--color-primario);
             border-radius: var(--radio-borde);
@@ -338,13 +341,19 @@
 
         .sun {
             position: absolute;
-            top: 30px;
-            right: 40px;
-            width: 60px;
-            height: 60px;
+            top: 25px;
+            right: 35px;
+            width: 55px;
+            height: 55px;
             background: #FFD700;
             border-radius: 50%;
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+        }
+
+        .sun-small {
+            width: 45px !important;
+            height: 45px !important;
+            top: 30px !important;
         }
 
         .moon {
@@ -367,46 +376,52 @@
 
         .cloud1 { top: 50px; left: 60px; width: 80px; height: 35px; }
         .cloud2 { top: 80px; left: 250px; width: 70px; height: 30px; }
-        .cloud-extra { top: 120px; left: 150px; width: 60px; height: 25px; }
+        .cloud3 { top: 120px; left: 150px; width: 60px; height: 25px; }
+        .cloud4 { top: 45px; left: 320px; width: 65px; height: 28px; }
 
         .house-body {
             position: absolute;
-            bottom: 120px;
+            bottom: 130px;
             left: 50%;
             transform: translateX(-50%);
-            width: 250px;
-            height: 180px;
+            width: 270px;
+            height: 190px;
             background: #D2691E;
             border: 3px solid #8B4513;
         }
 
         .roof {
             position: absolute;
-            bottom: 300px;
+            bottom: 320px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 140px solid transparent;
-            border-right: 140px solid transparent;
-            border-bottom: 100px solid #8B0000;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-bottom: 105px solid #8B0000;
         }
 
         .chimney {
             position: absolute;
-            bottom: 350px;
+            bottom: 375px;
             left: 50%;
-            transform: translateX(-70px);
-            width: 30px;
-            height: 60px;
+            transform: translateX(-75px);
+            width: 32px;
+            height: 65px;
             background: #654321;
             border: 2px solid #4A3015;
+        }
+
+        .chimney-short {
+            height: 55px !important;
+            bottom: 365px !important;
         }
 
         .smoke {
             position: absolute;
             top: -15px;
-            left: 5px;
+            left: 6px;
             width: 20px;
             height: 20px;
             background: #D3D3D3;
@@ -416,11 +431,11 @@
 
         .door {
             position: absolute;
-            bottom: 120px;
+            bottom: 130px;
             left: 50%;
             transform: translateX(-50%);
-            width: 60px;
-            height: 90px;
+            width: 65px;
+            height: 95px;
             border-radius: 8px 8px 0 0;
             border: 3px solid #4A3015;
         }
@@ -428,16 +443,31 @@
         .door-red { background: #DC2626; }
         .door-blue { background: #2563EB; }
 
+        .door-handle {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            width: 8px;
+            height: 8px;
+            background: #FFD700;
+            border-radius: 50%;
+        }
+
+        .handle-left {
+            right: auto !important;
+            left: 8px !important;
+        }
+
         .window {
             position: absolute;
-            width: 50px;
-            height: 50px;
+            width: 52px;
+            height: 52px;
             background: #87CEEB;
             border: 3px solid #4A3015;
         }
 
-        .window-left { bottom: 200px; left: 100px; }
-        .window-right { bottom: 200px; right: 100px; }
+        .window-left { bottom: 215px; left: 110px; }
+        .window-right { bottom: 215px; right: 110px; }
 
         .curtain {
             position: absolute;
@@ -456,68 +486,78 @@
 
         .tree {
             position: absolute;
-            bottom: 70px;
-            left: 50px;
+            bottom: 75px;
+            left: 55px;
+        }
+
+        .tree-right {
+            left: auto !important;
+            right: 55px !important;
         }
 
         .trunk {
-            width: 20px;
-            height: 40px;
+            width: 22px;
+            height: 45px;
             background: #8B4513;
             margin: 0 auto;
         }
 
         .leaves {
-            width: 60px;
-            height: 60px;
+            width: 65px;
+            height: 65px;
             background: #228B22;
             border-radius: 50%;
             position: relative;
-            top: -20px;
-            left: -20px;
+            top: -22px;
+            left: -21px;
         }
 
         .apple {
             position: absolute;
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             background: #FF0000;
             border-radius: 50%;
         }
 
-        .apple1 { top: 15px; left: 10px; }
-        .apple2 { top: 25px; right: 15px; }
-        .apple3 { top: 35px; left: 25px; }
+        .apple1 { top: 15px; left: 12px; }
+        .apple2 { top: 28px; right: 18px; }
+        .apple3 { top: 38px; left: 28px; }
 
         .flower {
             position: absolute;
-            bottom: 50px;
-            right: 80px;
+            bottom: 55px;
+            right: 85px;
+        }
+
+        .flower-left {
+            right: auto !important;
+            left: 320px !important;
         }
 
         .stem {
             width: 4px;
-            height: 30px;
+            height: 32px;
             background: #228B22;
             margin: 0 auto;
         }
 
         .petals {
-            width: 25px;
-            height: 25px;
+            width: 26px;
+            height: 26px;
             background: #FF69B4;
             border-radius: 50%;
             position: relative;
-            top: -15px;
-            left: -10px;
+            top: -16px;
+            left: -11px;
         }
 
         .path {
             position: absolute;
-            bottom: 120px;
+            bottom: 130px;
             left: 50%;
             transform: translateX(-50%);
-            width: 60px;
+            width: 65px;
             display: flex;
             flex-direction: column;
             gap: 5px;
@@ -535,22 +575,32 @@
 
         .mailbox {
             position: absolute;
-            bottom: 70px;
-            right: 50px;
-            width: 30px;
-            height: 40px;
+            bottom: 75px;
+            right: 55px;
+            width: 32px;
+            height: 42px;
             background: #3B82F6;
             border: 2px solid #1E40AF;
             border-radius: 4px 4px 0 0;
         }
 
+        .mailbox-left {
+            right: auto !important;
+            left: 320px !important;
+        }
+
         .mailbox-flag {
             position: absolute;
-            top: 5px;
-            right: -8px;
-            width: 12px;
+            top: 6px;
+            right: -9px;
+            width: 13px;
             height: 6px;
             background: #EF4444;
+        }
+
+        .flag-down {
+            transform: rotate(-45deg);
+            right: -7px !important;
         }
 
         .difference-marker {
@@ -579,7 +629,7 @@
         }
 
         /* ============================================
-           BUSCAMINAS
+           BUSCAMINAS 10x10
            ============================================ */
         .minesweeper-info {
             display: flex;
@@ -598,8 +648,8 @@
 
         .minesweeper-grid {
             display: grid;
-            grid-template-columns: repeat(8, 60px);
-            grid-template-rows: repeat(8, 60px);
+            grid-template-columns: repeat(10, 50px);
+            grid-template-rows: repeat(10, 50px);
             gap: 2px;
             background-color: #D1D5DB;
             padding: 2px;
@@ -614,7 +664,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.1s ease;
@@ -684,28 +734,29 @@
 
             .clues-panel {
                 min-width: 100%;
+                max-width: 100%;
             }
 
             .house-container {
-                width: 350px;
-                height: 440px;
+                width: 380px;
+                height: 460px;
             }
 
             .crossword-grid {
-                grid-template-columns: repeat(6, 50px);
-                grid-template-rows: repeat(6, 50px);
+                grid-template-columns: repeat(8, 48px);
+                grid-template-rows: repeat(8, 48px);
             }
 
             .minesweeper-grid {
-                grid-template-columns: repeat(8, 50px);
-                grid-template-rows: repeat(8, 50px);
+                grid-template-columns: repeat(10, 42px);
+                grid-template-rows: repeat(10, 42px);
             }
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>🧠 Juegos Mentales 🧠</h1>
+        <h1>🧠 Desafío Mental Avanzado 🧠</h1>
         <div class="game-selector">
             <button class="game-btn active" data-game="crossword">📝 Crucigrama</button>
             <button class="game-btn" data-game="differences">🔍 10 Diferencias</button>
@@ -714,9 +765,9 @@
     </header>
 
     <main>
-        <!-- CRUCIGRAMA -->
+        <!-- CRUCIGRAMA 8x8 -->
         <section id="crossword" class="game-container">
-            <h2 class="game-title">Crucigrama Temático</h2>
+            <h2 class="game-title">Crucigrama Avanzado 8×8</h2>
             <div class="crossword-layout">
                 <div class="crossword-grid" id="crosswordGrid"></div>
                 <div class="clues-panel">
@@ -739,7 +790,7 @@
 
         <!-- LAS 10 DIFERENCIAS -->
         <section id="differences" class="game-container hidden">
-            <h2 class="game-title">Encuentra las 10 Diferencias</h2>
+            <h2 class="game-title">Encuentra las 10 Diferencias Sutiles</h2>
             <div class="differences-counter" id="differencesCounter">Diferencias encontradas: 0 / 10</div>
             <div class="differences-layout">
                 <div class="house-container" id="house1"></div>
@@ -751,15 +802,15 @@
             </div>
         </section>
 
-        <!-- BUSCAMINAS -->
+        <!-- BUSCAMINAS 10x10 -->
         <section id="minesweeper" class="game-container hidden">
-            <h2 class="game-title">Buscaminas Relajante</h2>
+            <h2 class="game-title">Buscaminas Avanzado 10×10</h2>
             <div class="minesweeper-info">
                 <div class="info-item">
-                    <span>💣 Minas: 10</span>
+                    <span>💣 Minas: 20</span>
                 </div>
                 <div class="info-item">
-                    <span id="remainingCells">Casillas restantes: 54</span>
+                    <span id="remainingCells">Casillas restantes: 80</span>
                 </div>
                 <div class="info-item">
                     <span id="progressPercent">Progreso: 0%</span>
@@ -775,7 +826,7 @@
 
     <footer>
         <div class="message-display" id="messageDisplay">
-            ¡Bienvenido! Selecciona un juego y diviértete ejercitando tu mente 🎉
+            ¡Bienvenido al desafío avanzado! Pon a prueba tu ingenio 🎯
         </div>
     </footer>
 
@@ -784,23 +835,22 @@
         // CONFIGURACIÓN Y CONSTANTES
         // ============================================
         const MESSAGES = {
-            welcome: '¡Bienvenido! Selecciona un juego y diviértete ejercitando tu mente 🎉',
-            crosswordCorrect: ['¡Fantástico!', '¡Muy bien!', '¡Excelente memoria!', '¡Perfecto!', '¡Eres brillante!'],
-            crosswordHint: ['Las pistas son para usarse, ¡adelante!', '¡Aquí tienes una ayudita!', '¡Un empujoncito nunca está de más!'],
-            crosswordComplete: '🎉 ¡Increíble! Has completado el crucigrama. ¡Eres un maestro de las palabras!',
-            differenceFound: ['¡Qué ojo tan agudo!', '¡Perfecto!', '¡Excelente!', '¡Muy bien observado!', '¡Eres un detective nato!'],
-            differenceHint: ['¡Mira con atención esta zona!', '¡Aquí hay algo diferente!', '¡Fíjate bien aquí!'],
-            differenceComplete: '🎉 ¡Increíble! Encontraste las 10 diferencias. ¡Tienes una vista excepcional!',
-            minesweeperSafe: ['¡Buen razonamiento!', '¡Vas muy bien!', '¡Genial! Esta zona está despejada', '¡Perfecto!'],
-            minesweeperMine: ['⚠️ Cuidado, había una mina aquí. ¡Pero puedes continuar!', '¡Ups! Mina encontrada, pero sigue adelante'],
-            minesweeperComplete: '🎉 ¡Increíble! Has completado el desafío. ¡Tu lógica es impresionante!'
+            welcome: '¡Bienvenido al desafío avanzado! Pon a prueba tu ingenio 🎯',
+            crosswordCorrect: ['¡Excelente!', '¡Correcto!', '¡Brillante!', '¡Impresionante!', '¡Magnífico!'],
+            crosswordHint: ['Aquí tienes una pista útil', 'Un pequeño empujón', 'Esto te ayudará'],
+            crosswordComplete: '🎉 ¡Extraordinario! Has dominado el crucigrama avanzado',
+            differenceFound: ['¡Aguda observación!', '¡Perfecto!', '¡Excelente vista!', '¡Muy bien!', '¡Detectivesco!'],
+            differenceHint: ['Observa cuidadosamente aquí', 'Hay algo sutil en esta zona', 'Fíjate en los detalles'],
+            differenceComplete: '🎉 ¡Magistral! Has encontrado todas las diferencias sutiles',
+            minesweeperSafe: ['¡Lógica impecable!', '¡Excelente deducción!', '¡Perfecto razonamiento!', '¡Brillante!'],
+            minesweeperMine: ['⚠️ Mina detectada, pero puedes continuar', '¡Cuidado! Había una mina aquí'],
+            minesweeperComplete: '🎉 ¡Sobresaliente! Has conquistado el buscaminas avanzado'
         };
 
         // ============================================
         // ESTADO GLOBAL
         // ============================================
         let currentGame = 'crossword';
-        let messageTimeout = null;
 
         // ============================================
         // UTILIDADES GENERALES
@@ -823,11 +873,9 @@
             btn.addEventListener('click', function() {
                 const game = this.dataset.game;
 
-                // Actualizar botones
                 document.querySelectorAll('.game-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
 
-                // Mostrar juego correspondiente
                 document.querySelectorAll('.game-container').forEach(container => {
                     container.classList.add('hidden');
                 });
@@ -835,33 +883,36 @@
 
                 currentGame = game;
 
-                // Mensaje de bienvenida específico
                 const welcomeMessages = {
-                    crossword: '¡Vamos a completar este crucigrama! 📝',
-                    differences: '¡A encontrar las 10 diferencias! 🔍',
-                    minesweeper: '¡Usa tu lógica para revelar todas las casillas seguras! 💎'
+                    crossword: '¡Desafío literario y cultural! 📝',
+                    differences: '¡Pon a prueba tu percepción visual! 🔍',
+                    minesweeper: '¡Lógica y estrategia avanzada! 💎'
                 };
                 showMessage(welcomeMessages[game]);
             });
         });
 
         // ============================================
-        // CRUCIGRAMA
+        // CRUCIGRAMA 8x8 AVANZADO
         // ============================================
         const crosswordData = {
             grid: [
-                [' ', ' ', 'S', ' ', ' ', ' '],
-                ['C', 'A', 'S', 'A', ' ', ' '],
-                [' ', ' ', 'O', ' ', 'L', ' '],
-                [' ', 'L', 'U', 'N', 'A', ' '],
-                [' ', ' ', 'L', ' ', 'M', ' '],
-                [' ', ' ', ' ', ' ', 'O', 'R']
+                [' ', ' ', 'C', 'U', 'L', 'T', 'U', 'R', 'A'],
+                [' ', ' ', 'O', ' ', ' ', ' ', ' ', ' ', ' '],
+                ['F', 'I', 'L', 'O', 'S', 'O', 'F', 'I', 'A'],
+                [' ', ' ', 'O', ' ', ' ', ' ', ' ', 'D', ' '],
+                [' ', 'L', 'I', 'T', 'E', 'R', 'A', 'T', 'U', 'R', 'A'],
+                [' ', ' ', 'M', ' ', ' ', ' ', ' ', 'O', ' '],
+                [' ', ' ', 'B', ' ', ' ', ' ', ' ', 'R', ' '],
+                ['C', 'I', 'E', 'N', 'C', 'I', 'A', ' ', ' ']
             ],
             words: [
-                { word: 'CASA', row: 1, col: 0, dir: 'H', num: 1, clue: 'Lugar donde vivimos' },
-                { word: 'LUNA', row: 3, col: 1, dir: 'H', num: 2, clue: 'Satélite natural de la Tierra' },
-                { word: 'SOL', row: 0, col: 2, dir: 'V', num: 3, clue: 'Estrella que nos da luz y calor' },
-                { word: 'AMOR', row: 2, col: 4, dir: 'V', num: 4, clue: 'Sentimiento profundo de cariño' }
+                { word: 'CULTURA', row: 0, col: 2, dir: 'H', num: 1, clue: 'Conjunto de conocimientos y manifestaciones artísticas de un pueblo' },
+                { word: 'FILOSOFIA', row: 2, col: 0, dir: 'H', num: 2, clue: 'Ciencia que estudia la esencia, propiedades y causas de las cosas' },
+                { word: 'LITERATURA', row: 4, col: 1, dir: 'H', num: 3, clue: 'Arte que emplea la palabra como medio de expresión' },
+                { word: 'CIENCIA', row: 7, col: 0, dir: 'H', num: 4, clue: 'Conocimiento sistemático basado en el método científico' },
+                { word: 'COLOMBIA', row: 0, col: 2, dir: 'V', num: 5, clue: 'País suramericano de Gabriel García Márquez' },
+                { word: 'IDIOTOR', row: 2, col: 7, dir: 'V', num: 6, clue: 'Idioma particular de una región o comunidad (sin la última letra)' }
             ]
         };
 
@@ -878,9 +929,9 @@
             verticalClues.innerHTML = '';
             crosswordState = {};
 
-            // Crear grid
-            for (let i = 0; i < 6; i++) {
-                for (let j = 0; j < 6; j++) {
+            // Crear grid 8x8
+            for (let i = 0; i < 8; i++) {
+                for (let j = 0; j < 8; j++) {
                     const cell = document.createElement('div');
                     const letter = crosswordData.grid[i][j];
 
@@ -898,7 +949,6 @@
                         input.addEventListener('input', handleCrosswordInput);
                         input.addEventListener('focus', handleCrosswordFocus);
 
-                        // Agregar número de palabra si es inicio
                         const wordStart = crosswordData.words.find(w => w.row === i && w.col === j);
                         if (wordStart) {
                             const numSpan = document.createElement('span');
@@ -919,7 +969,7 @@
             crosswordData.words.forEach(word => {
                 const clueDiv = document.createElement('div');
                 clueDiv.className = 'clue-item';
-                clueDiv.innerHTML = `<strong>${word.num}.</strong> ${word.clue} (${word.word.length} letras)`;
+                clueDiv.innerHTML = `<strong>${word.num}.</strong> ${word.clue} (${word.word.length})`;
                 clueDiv.addEventListener('click', () => selectWord(word));
 
                 if (word.dir === 'H') {
@@ -940,7 +990,6 @@
             input.value = value;
             crosswordState[`${row}-${col}`] = value;
 
-            // Validar letra
             const cell = input.parentElement;
             if (value === answer) {
                 cell.classList.add('correct');
@@ -954,7 +1003,6 @@
                 cell.classList.remove('correct', 'incorrect');
             }
 
-            // Mover al siguiente input
             if (value && currentWord) {
                 moveToNextCell(row, col);
             }
@@ -964,7 +1012,6 @@
             const row = parseInt(e.target.dataset.row);
             const col = parseInt(e.target.dataset.col);
 
-            // Encontrar palabra que contiene esta celda
             const word = crosswordData.words.find(w => {
                 if (w.dir === 'H') {
                     return w.row === row && col >= w.col && col < w.col + w.word.length;
@@ -979,12 +1026,10 @@
         function selectWord(word) {
             currentWord = word;
 
-            // Limpiar selección anterior
             document.querySelectorAll('.crossword-cell').forEach(cell => {
                 cell.classList.remove('selected');
             });
 
-            // Resaltar palabra
             for (let i = 0; i < word.word.length; i++) {
                 let row, col;
                 if (word.dir === 'H') {
@@ -1001,7 +1046,6 @@
                 }
             }
 
-            // Focus en primera celda vacía
             for (let i = 0; i < word.word.length; i++) {
                 let row, col;
                 if (word.dir === 'H') {
@@ -1039,11 +1083,10 @@
 
         function giveCrosswordHint() {
             if (!currentWord) {
-                showMessage('Primero haz clic en una palabra del crucigrama');
+                showMessage('Primero selecciona una palabra del crucigrama');
                 return;
             }
 
-            // Encontrar primera letra vacía o incorrecta
             for (let i = 0; i < currentWord.word.length; i++) {
                 let row, col;
                 if (currentWord.dir === 'H') {
@@ -1066,7 +1109,7 @@
                 }
             }
 
-            showMessage('¡Esta palabra ya está completa! Prueba con otra.');
+            showMessage('Esta palabra ya está completa');
         }
 
         function verifyCrossword() {
@@ -1080,7 +1123,7 @@
             });
 
             const percentage = Math.round((correct / total) * 100);
-            showMessage(`Has completado el ${percentage}% del crucigrama. ${correct} de ${total} letras correctas.`);
+            showMessage(`Progreso: ${percentage}% - ${correct}/${total} letras correctas`);
         }
 
         function checkCrosswordComplete() {
@@ -1090,8 +1133,6 @@
 
             if (allCorrect) {
                 showMessage(MESSAGES.crosswordComplete);
-
-                // Marcar pistas como completadas
                 document.querySelectorAll('.clue-item').forEach(clue => {
                     clue.classList.add('completed');
                 });
@@ -1110,23 +1151,23 @@
 
             crosswordState = {};
             currentWord = null;
-            showMessage('¡Crucigrama reiniciado! Comienza de nuevo cuando quieras.');
+            showMessage('Crucigrama reiniciado');
         }
 
         // ============================================
-        // LAS 10 DIFERENCIAS
+        // LAS 10 DIFERENCIAS (SUTILES)
         // ============================================
         const differences = [
-            { id: 'curtains', house: 1, desc: 'Cortinas en ventana izquierda' },
-            { id: 'door-color', house: 2, desc: 'Color de la puerta' },
-            { id: 'apples', house: 1, desc: 'Manzanas en el árbol' },
-            { id: 'sky-object', house: 2, desc: 'Luna en lugar de sol' },
-            { id: 'cloud-extra', house: 2, desc: 'Nube adicional' },
-            { id: 'flower', house: 1, desc: 'Flor en el jardín' },
-            { id: 'window-state', house: 2, desc: 'Ventana derecha abierta' },
-            { id: 'smoke', house: 1, desc: 'Humo en la chimenea' },
-            { id: 'path-color', house: 2, desc: 'Piedras del camino' },
-            { id: 'mailbox', house: 1, desc: 'Buzón de correo' }
+            { id: 'sun-size', house: 2, desc: 'Sol más pequeño' },
+            { id: 'cloud4', house: 2, desc: 'Nube adicional' },
+            { id: 'chimney-height', house: 2, desc: 'Chimenea más corta' },
+            { id: 'door-handle', house: 2, desc: 'Manija de puerta al otro lado' },
+            { id: 'tree-position', house: 2, desc: 'Árbol en posición diferente' },
+            { id: 'flower-position', house: 2, desc: 'Flor en posición diferente' },
+            { id: 'mailbox-position', house: 2, desc: 'Buzón en posición diferente' },
+            { id: 'mailbox-flag', house: 2, desc: 'Bandera del buzón hacia abajo' },
+            { id: 'path-color', house: 2, desc: 'Color del camino' },
+            { id: 'window-state', house: 2, desc: 'Ventana con estado diferente' }
         ];
 
         let foundDifferences = new Set();
@@ -1146,7 +1187,6 @@
 
             updateDifferencesCounter();
 
-            // Event listeners para detectar clicks
             house1.addEventListener('click', (e) => handleDifferenceClick(e, 1));
             house2.addEventListener('click', (e) => handleDifferenceClick(e, 2));
         }
@@ -1156,35 +1196,44 @@
                 <div class="sky"></div>
                 <div class="ground"></div>
 
-                ${houseNum === 1 ? '<div class="sun"></div>' : '<div class="moon"></div>'}
+                <div class="sun ${houseNum === 2 ? 'sun-small' : ''}"></div>
 
                 <div class="cloud cloud1"></div>
                 <div class="cloud cloud2"></div>
-                ${houseNum === 2 ? '<div class="cloud cloud-extra"></div>' : ''}
+                <div class="cloud cloud3"></div>
+                ${houseNum === 2 ? '<div class="cloud cloud4"></div>' : ''}
 
                 <div class="roof"></div>
-                <div class="chimney">
-                    ${houseNum === 1 ? '<div class="smoke"></div>' : ''}
+                <div class="chimney ${houseNum === 2 ? 'chimney-short' : ''}">
+                    <div class="smoke"></div>
                 </div>
 
                 <div class="house-body"></div>
 
-                <div class="door ${houseNum === 1 ? 'door-red' : 'door-blue'}"></div>
+                <div class="door door-red">
+                    <div class="door-handle ${houseNum === 2 ? 'handle-left' : ''}"></div>
+                </div>
 
                 <div class="window window-left">
-                    ${houseNum === 1 ? '<div class="curtain curtain-left"></div><div class="curtain curtain-right"></div>' : ''}
+                    <div class="curtain curtain-left"></div>
+                    <div class="curtain curtain-right"></div>
                 </div>
 
                 <div class="window window-right ${houseNum === 2 ? 'window-open' : ''}"></div>
 
-                <div class="tree">
+                <div class="tree ${houseNum === 2 ? 'tree-right' : ''}">
                     <div class="leaves">
-                        ${houseNum === 1 ? '<div class="apple apple1"></div><div class="apple apple2"></div><div class="apple apple3"></div>' : ''}
+                        <div class="apple apple1"></div>
+                        <div class="apple apple2"></div>
+                        <div class="apple apple3"></div>
                     </div>
                     <div class="trunk"></div>
                 </div>
 
-                ${houseNum === 1 ? '<div class="flower"><div class="petals"></div><div class="stem"></div></div>' : ''}
+                <div class="flower ${houseNum === 2 ? 'flower-left' : ''}">
+                    <div class="petals"></div>
+                    <div class="stem"></div>
+                </div>
 
                 <div class="path">
                     <div class="stone ${houseNum === 1 ? 'stone-gray' : 'stone-brown'}"></div>
@@ -1192,25 +1241,23 @@
                     <div class="stone ${houseNum === 1 ? 'stone-gray' : 'stone-brown'}"></div>
                 </div>
 
-                ${houseNum === 1 ? '<div class="mailbox"><div class="mailbox-flag"></div></div>' : ''}
+                <div class="mailbox ${houseNum === 2 ? 'mailbox-left' : ''}">
+                    <div class="mailbox-flag ${houseNum === 2 ? 'flag-down' : ''}"></div>
+                </div>
             `;
 
-            // Guardar referencias a elementos de diferencias
-            if (houseNum === 1) {
+            if (houseNum === 2) {
                 differenceElements.push(
-                    { id: 'curtains', element: container.querySelector('.window-left'), house: 1 },
-                    { id: 'apples', element: container.querySelector('.leaves'), house: 1 },
-                    { id: 'sky-object', element: container.querySelector('.sun'), house: 1 },
-                    { id: 'flower', element: container.querySelector('.flower'), house: 1 },
-                    { id: 'smoke', element: container.querySelector('.smoke'), house: 1 },
-                    { id: 'mailbox', element: container.querySelector('.mailbox'), house: 1 }
-                );
-            } else {
-                differenceElements.push(
-                    { id: 'door-color', element: container.querySelector('.door'), house: 2 },
-                    { id: 'cloud-extra', element: container.querySelector('.cloud-extra'), house: 2 },
-                    { id: 'window-state', element: container.querySelector('.window-right'), house: 2 },
-                    { id: 'path-color', element: container.querySelector('.path'), house: 2 }
+                    { id: 'sun-size', element: container.querySelector('.sun'), house: 2 },
+                    { id: 'cloud4', element: container.querySelector('.cloud4'), house: 2 },
+                    { id: 'chimney-height', element: container.querySelector('.chimney'), house: 2 },
+                    { id: 'door-handle', element: container.querySelector('.door-handle'), house: 2 },
+                    { id: 'tree-position', element: container.querySelector('.tree'), house: 2 },
+                    { id: 'flower-position', element: container.querySelector('.flower'), house: 2 },
+                    { id: 'mailbox-position', element: container.querySelector('.mailbox'), house: 2 },
+                    { id: 'mailbox-flag', element: container.querySelector('.mailbox-flag'), house: 2 },
+                    { id: 'path-color', element: container.querySelector('.path'), house: 2 },
+                    { id: 'window-state', element: container.querySelector('.window-right'), house: 2 }
                 );
             }
         }
@@ -1218,7 +1265,6 @@
         function handleDifferenceClick(e, houseNum) {
             const clickedElement = e.target;
 
-            // Buscar si el click fue en un elemento de diferencia
             for (const diff of differenceElements) {
                 if (diff.house === houseNum && (diff.element === clickedElement || diff.element.contains(clickedElement))) {
                     if (!foundDifferences.has(diff.id)) {
@@ -1250,7 +1296,6 @@
 
             container.appendChild(marker);
 
-            // Marcar también en la otra casa
             const otherHouse = houseNum === 1 ? 2 : 1;
             const otherContainer = document.getElementById(`house${otherHouse}`);
             const otherDiff = differenceElements.find(d => d.id === diffId && d.house === otherHouse);
@@ -1274,11 +1319,10 @@
         }
 
         function giveDifferenceHint() {
-            // Encontrar una diferencia no encontrada
             const notFound = differences.filter(d => !foundDifferences.has(d.id));
 
             if (notFound.length === 0) {
-                showMessage('¡Ya encontraste todas las diferencias! ¡Excelente trabajo!');
+                showMessage('¡Has encontrado todas las diferencias!');
                 return;
             }
 
@@ -1298,14 +1342,14 @@
         function resetDifferences() {
             foundDifferences = new Set();
             initDifferences();
-            showMessage('¡Juego reiniciado! Busca las 10 diferencias de nuevo.');
+            showMessage('Juego reiniciado');
         }
 
         // ============================================
-        // BUSCAMINAS
+        // BUSCAMINAS 10x10 AVANZADO
         // ============================================
-        const GRID_SIZE = 8;
-        const MINE_COUNT = 10;
+        const GRID_SIZE = 10;
+        const MINE_COUNT = 20;
         let mineField = [];
         let revealedCells = new Set();
         let flaggedCells = new Set();
@@ -1317,7 +1361,6 @@
             revealedCells = new Set();
             flaggedCells = new Set();
 
-            // Inicializar campo
             for (let i = 0; i < GRID_SIZE; i++) {
                 mineField[i] = [];
                 for (let j = 0; j < GRID_SIZE; j++) {
@@ -1325,7 +1368,6 @@
                 }
             }
 
-            // Colocar minas aleatoriamente
             let minesPlaced = 0;
             while (minesPlaced < MINE_COUNT) {
                 const row = Math.floor(Math.random() * GRID_SIZE);
@@ -1337,7 +1379,6 @@
                 }
             }
 
-            // Calcular números
             for (let i = 0; i < GRID_SIZE; i++) {
                 for (let j = 0; j < GRID_SIZE; j++) {
                     if (!mineField[i][j].mine) {
@@ -1346,7 +1387,6 @@
                 }
             }
 
-            // Crear UI
             for (let i = 0; i < GRID_SIZE; i++) {
                 for (let j = 0; j < GRID_SIZE; j++) {
                     const cell = document.createElement('div');
@@ -1412,7 +1452,6 @@
                 cellElement.textContent = count;
                 cellElement.dataset.count = count;
             } else {
-                // Auto-revelar adyacentes si count es 0
                 for (let i = -1; i <= 1; i++) {
                     for (let j = -1; j <= 1; j++) {
                         if (i === 0 && j === 0) continue;
@@ -1447,8 +1486,7 @@
         }
 
         function revealSafeZone() {
-            // Encontrar una zona 3x3 sin minas
-            for (let attempts = 0; attempts < 100; attempts++) {
+            for (let attempts = 0; attempts < 200; attempts++) {
                 const centerRow = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
                 const centerCol = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
 
@@ -1465,20 +1503,18 @@
                 }
 
                 if (!hasMines && !allRevealed) {
-                    // Revelar zona
                     for (let i = -1; i <= 1; i++) {
                         for (let j = -1; j <= 1; j++) {
                             revealCell(centerRow + i, centerCol + j);
                         }
                     }
-                    showMessage('¡Zona segura revelada! ¡Sigue así!');
+                    showMessage('¡Zona segura revelada!');
                     updateMinesweeperInfo();
                     checkMinesweeperComplete();
                     return;
                 }
             }
 
-            // Si no encuentra zona 3x3, revelar una celda segura
             for (let i = 0; i < GRID_SIZE; i++) {
                 for (let j = 0; j < GRID_SIZE; j++) {
                     if (!mineField[i][j].mine && !mineField[i][j].revealed) {
@@ -1491,7 +1527,7 @@
                 }
             }
 
-            showMessage('¡Ya revelaste todas las casillas seguras! ¡Felicitaciones!');
+            showMessage('¡Ya revelaste todas las casillas seguras!');
         }
 
         function updateMinesweeperInfo() {
@@ -1517,7 +1553,7 @@
 
         function resetMinesweeper() {
             initMinesweeper();
-            showMessage('¡Buscaminas reiniciado! Comienza de nuevo cuando quieras.');
+            showMessage('Buscaminas reiniciado');
         }
 
         // ============================================
