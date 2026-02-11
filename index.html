@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juegos Mentales - Diversión y Ejercicio Cerebral</title>
+    <style>
+        /* ============================================
+           VARIABLES CSS Y RESET
+           ============================================ */
+        :root {
+            --color-fondo: #FAFAFA;
+            --color-texto: #222222;
+            --color-primario: #2563EB;
+            --color-exito: #22C55E;
+            --color-advertencia: #F59E0B;
+            --color-error: #EF4444;
+            --color-pista: #FBBF24;
+            --color-hover: #1E40AF;
+
+            --fuente-base: 20px;
+            --fuente-grande: 24px;
+            --fuente-titulo: 32px;
+
+            --espaciado-xs: 8px;
+            --espaciado-sm: 12px;
+            --espaciado-md: 16px;
+            --espaciado-lg: 24px;
+            --espaciado-xl: 32px;
+
+            --boton-altura: 60px;
+            --radio-borde: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            font-size: var(--fuente-base);
+            line-height: 1.6;
+            padding: var(--espaciado-lg);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ============================================
+           UTILIDADES
+           ============================================ */
+        .hidden {
+            display: none !important;
+        }
+
+        .active {
+            background-color: var(--color-primario) !important;
+            color: white !important;
+        }
+
+        .correct {
+            background-color: #D1FAE5 !important;
+            border-color: var(--color-exito) !important;
+        }
+
+        .incorrect {
+            background-color: #FEE2E2 !important;
+            border-color: var(--color-error) !important;
+        }
+
+        .hint-highlight {
+            animation: pulse-hint 1.5s infinite;
+            border: 3px solid var(--color-pista) !important;
+        }
+
+        @keyframes pulse-hint {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(251, 191, 36, 0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============================================
+           HEADER Y NAVEGACIÓN
+           ============================================ */
+        header {
+            text-align: center;
+            margin-bottom: var(--espaciado-xl);
+        }
+
+        h1 {
+            font-size: var(--fuente-titulo);
+            color: var(--color-primario);
+            margin-bottom: var(--espaciado-lg);
+            font-weight: 700;
+        }
+
+        .game-selector {
+            display: flex;
+            gap: var(--espaciado-md);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .game-btn {
+            min-height: var(--boton-altura);
+            padding: var(--espaciado-md) var(--espaciado-lg);
+            font-size: var(--fuente-base);
+            font-weight: 600;
+            border: 3px solid var(--color-primario);
+            background-color: white;
+            color: var(--color-primario);
+            border-radius: var(--radio-borde);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+
+        .game-btn:hover {
+            background-color: var(--color-hover);
+            border-color: var(--color-hover);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .game-btn.active {
+            background-color: var(--color-primario);
+            color: white;
+        }
+
+        /* ============================================
+           BOTONES DE ACCIÓN
+           ============================================ */
+        .action-buttons {
+            display: flex;
+            gap: var(--espaciado-md);
+            margin-top: var(--espaciado-lg);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            min-height: var(--boton-altura);
+            padding: var(--espaciado-md) var(--espaciado-xl);
+            font-size: var(--fuente-base);
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radio-borde);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primario);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-hover);
+            transform: scale(1.05);
+        }
+
+        .btn-hint {
+            background-color: var(--color-pista);
+            color: var(--color-texto);
+        }
+
+        .btn-hint:hover {
+            background-color: #F59E0B;
+            transform: scale(1.05);
+        }
+
+        .btn-reset {
+            background-color: #6B7280;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background-color: #4B5563;
+            transform: scale(1.05);
+        }
+
+        /* ============================================
+           CONTENEDOR DE JUEGOS
+           ============================================ */
+        .game-container {
+            background-color: white;
+            padding: var(--espaciado-xl);
+            border-radius: var(--radio-borde);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .game-title {
+            font-size: 28px;
+            color: var(--color-primario);
+            margin-bottom: var(--espaciado-lg);
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* ============================================
+           CRUCIGRAMA
+           ============================================ */
+        .crossword-layout {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: var(--espaciado-xl);
+            align-items: start;
+        }
+
+        .crossword-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 60px);
+            grid-template-rows: repeat(6, 60px);
+            gap: 2px;
+            background-color: #D1D5DB;
+            padding: 2px;
+            border: 3px solid var(--color-primario);
+        }
+
+        .crossword-cell {
+            background-color: white;
+            border: 2px solid #9CA3AF;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .crossword-cell.blocked {
+            background-color: #1F2937;
+            cursor: not-allowed;
+        }
+
+        .crossword-cell input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            text-transform: uppercase;
+            background-color: transparent;
+            color: var(--color-texto);
+        }
+
+        .crossword-cell input:focus {
+            outline: none;
+            background-color: #DBEAFE;
+        }
+
+        .crossword-cell.selected {
+            background-color: #DBEAFE;
+            border-color: var(--color-primario);
+            border-width: 3px;
+        }
+
+        .cell-number {
+            position: absolute;
+            top: 2px;
+            left: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--color-primario);
+        }
+
+        .clues-panel {
+            min-width: 300px;
+            background-color: #F9FAFB;
+            padding: var(--espaciado-lg);
+            border-radius: var(--radio-borde);
+            border: 2px solid #E5E7EB;
+        }
+
+        .clues-section {
+            margin-bottom: var(--espaciado-lg);
+        }
+
+        .clues-section h3 {
+            font-size: 22px;
+            color: var(--color-primario);
+            margin-bottom: var(--espaciado-sm);
+        }
+
+        .clue-item {
+            padding: var(--espaciado-sm);
+            margin-bottom: var(--espaciado-xs);
+            background-color: white;
+            border-radius: 4px;
+            border-left: 4px solid var(--color-primario);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .clue-item:hover {
+            background-color: #DBEAFE;
+            transform: translateX(4px);
+        }
+
+        .clue-item.completed {
+            background-color: #D1FAE5;
+            border-left-color: var(--color-exito);
+            opacity: 0.7;
+        }
+
+        /* ============================================
+           LAS 10 DIFERENCIAS
+           ============================================ */
+        .differences-layout {
+            display: flex;
+            gap: var(--espaciado-xl);
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: var(--espaciado-lg);
+        }
+
+        .house-container {
+            width: 400px;
+            height: 500px;
+            position: relative;
+            border: 3px solid var(--color-primario);
+            border-radius: var(--radio-borde);
+            background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 50%, #90EE90 50%, #90EE90 100%);
+            cursor: crosshair;
+        }
+
+        /* Elementos de la casa */
+        .sky { position: absolute; top: 0; left: 0; right: 0; height: 60%; background: linear-gradient(to bottom, #87CEEB, #B0E0E6); }
+        .ground { position: absolute; bottom: 0; left: 0; right: 0; height: 40%; background: linear-gradient(to bottom, #90EE90, #7CB342); }
+
+        .sun {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            width: 60px;
+            height: 60px;
+            background: #FFD700;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+        }
+
+        .moon {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            width: 60px;
+            height: 60px;
+            background: #F0F0F0;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(240, 240, 240, 0.6);
+        }
+
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .cloud1 { top: 50px; left: 60px; width: 80px; height: 35px; }
+        .cloud2 { top: 80px; left: 250px; width: 70px; height: 30px; }
+        .cloud-extra { top: 120px; left: 150px; width: 60px; height: 25px; }
+
+        .house-body {
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250px;
+            height: 180px;
+            background: #D2691E;
+            border: 3px solid #8B4513;
+        }
+
+        .roof {
+            position: absolute;
+            bottom: 300px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 140px solid transparent;
+            border-right: 140px solid transparent;
+            border-bottom: 100px solid #8B0000;
+        }
+
+        .chimney {
+            position: absolute;
+            bottom: 350px;
+            left: 50%;
+            transform: translateX(-70px);
+            width: 30px;
+            height: 60px;
+            background: #654321;
+            border: 2px solid #4A3015;
+        }
+
+        .smoke {
+            position: absolute;
+            top: -15px;
+            left: 5px;
+            width: 20px;
+            height: 20px;
+            background: #D3D3D3;
+            border-radius: 50%;
+            opacity: 0.7;
+        }
+
+        .door {
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 90px;
+            border-radius: 8px 8px 0 0;
+            border: 3px solid #4A3015;
+        }
+
+        .door-red { background: #DC2626; }
+        .door-blue { background: #2563EB; }
+
+        .window {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: #87CEEB;
+            border: 3px solid #4A3015;
+        }
+
+        .window-left { bottom: 200px; left: 100px; }
+        .window-right { bottom: 200px; right: 100px; }
+
+        .curtain {
+            position: absolute;
+            top: 0;
+            width: 20px;
+            height: 100%;
+            background: #FFB6C1;
+        }
+
+        .curtain-left { left: 0; }
+        .curtain-right { right: 0; }
+
+        .window-open {
+            background: #FFE4B5 !important;
+        }
+
+        .tree {
+            position: absolute;
+            bottom: 70px;
+            left: 50px;
+        }
+
+        .trunk {
+            width: 20px;
+            height: 40px;
+            background: #8B4513;
+            margin: 0 auto;
+        }
+
+        .leaves {
+            width: 60px;
+            height: 60px;
+            background: #228B22;
+            border-radius: 50%;
+            position: relative;
+            top: -20px;
+            left: -20px;
+        }
+
+        .apple {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #FF0000;
+            border-radius: 50%;
+        }
+
+        .apple1 { top: 15px; left: 10px; }
+        .apple2 { top: 25px; right: 15px; }
+        .apple3 { top: 35px; left: 25px; }
+
+        .flower {
+            position: absolute;
+            bottom: 50px;
+            right: 80px;
+        }
+
+        .stem {
+            width: 4px;
+            height: 30px;
+            background: #228B22;
+            margin: 0 auto;
+        }
+
+        .petals {
+            width: 25px;
+            height: 25px;
+            background: #FF69B4;
+            border-radius: 50%;
+            position: relative;
+            top: -15px;
+            left: -10px;
+        }
+
+        .path {
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .stone {
+            width: 20px;
+            height: 8px;
+            border-radius: 3px;
+            margin: 0 auto;
+        }
+
+        .stone-gray { background: #9CA3AF; }
+        .stone-brown { background: #92400E; }
+
+        .mailbox {
+            position: absolute;
+            bottom: 70px;
+            right: 50px;
+            width: 30px;
+            height: 40px;
+            background: #3B82F6;
+            border: 2px solid #1E40AF;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .mailbox-flag {
+            position: absolute;
+            top: 5px;
+            right: -8px;
+            width: 12px;
+            height: 6px;
+            background: #EF4444;
+        }
+
+        .difference-marker {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--color-exito);
+            border-radius: 50%;
+            background: rgba(34, 197, 94, 0.2);
+            pointer-events: none;
+            animation: pulse-marker 0.5s ease;
+        }
+
+        @keyframes pulse-marker {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .differences-counter {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin: var(--espaciado-lg) 0;
+        }
+
+        /* ============================================
+           BUSCAMINAS
+           ============================================ */
+        .minesweeper-info {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: var(--espaciado-lg);
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .info-item {
+            padding: var(--espaciado-md);
+            background-color: #F3F4F6;
+            border-radius: var(--radio-borde);
+            border: 2px solid var(--color-primario);
+        }
+
+        .minesweeper-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 60px);
+            grid-template-rows: repeat(8, 60px);
+            gap: 2px;
+            background-color: #D1D5DB;
+            padding: 2px;
+            border: 3px solid var(--color-primario);
+            margin: 0 auto;
+            width: fit-content;
+        }
+
+        .mine-cell {
+            background-color: #E5E7EB;
+            border: 3px outset #9CA3AF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            user-select: none;
+        }
+
+        .mine-cell:hover:not(.revealed) {
+            background-color: #D1D5DB;
+            transform: scale(1.05);
+        }
+
+        .mine-cell.revealed {
+            background-color: white;
+            border-style: inset;
+            cursor: default;
+        }
+
+        .mine-cell.flagged {
+            background-color: #FEF3C7;
+        }
+
+        .mine-cell.mine-revealed {
+            background-color: #FEE2E2;
+        }
+
+        .mine-cell[data-count="0"] { color: white; }
+        .mine-cell[data-count="1"] { color: #3B82F6; }
+        .mine-cell[data-count="2"] { color: #22C55E; }
+        .mine-cell[data-count="3"] { color: #F59E0B; }
+        .mine-cell[data-count="4"] { color: #EF4444; }
+        .mine-cell[data-count="5"] { color: #8B5CF6; }
+        .mine-cell[data-count="6"] { color: #EC4899; }
+        .mine-cell[data-count="7"] { color: #6366F1; }
+        .mine-cell[data-count="8"] { color: #1F2937; }
+
+        /* ============================================
+           FOOTER Y MENSAJES
+           ============================================ */
+        footer {
+            margin-top: var(--espaciado-xl);
+            text-align: center;
+        }
+
+        .message-display {
+            min-height: 80px;
+            padding: var(--espaciado-lg);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: var(--radio-borde);
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 1024px) {
+            .crossword-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .clues-panel {
+                min-width: 100%;
+            }
+
+            .house-container {
+                width: 350px;
+                height: 440px;
+            }
+
+            .crossword-grid {
+                grid-template-columns: repeat(6, 50px);
+                grid-template-rows: repeat(6, 50px);
+            }
+
+            .minesweeper-grid {
+                grid-template-columns: repeat(8, 50px);
+                grid-template-rows: repeat(8, 50px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🧠 Juegos Mentales 🧠</h1>
+        <div class="game-selector">
+            <button class="game-btn active" data-game="crossword">📝 Crucigrama</button>
+            <button class="game-btn" data-game="differences">🔍 10 Diferencias</button>
+            <button class="game-btn" data-game="minesweeper">💎 Buscaminas</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- CRUCIGRAMA -->
+        <section id="crossword" class="game-container">
+            <h2 class="game-title">Crucigrama Temático</h2>
+            <div class="crossword-layout">
+                <div class="crossword-grid" id="crosswordGrid"></div>
+                <div class="clues-panel">
+                    <div class="clues-section">
+                        <h3>➡️ Horizontal</h3>
+                        <div id="horizontalClues"></div>
+                    </div>
+                    <div class="clues-section">
+                        <h3>⬇️ Vertical</h3>
+                        <div id="verticalClues"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-hint" onclick="giveCrosswordHint()">💡 Pista</button>
+                <button class="btn btn-primary" onclick="verifyCrossword()">✓ Verificar</button>
+                <button class="btn btn-reset" onclick="resetCrossword()">🔄 Reiniciar</button>
+            </div>
+        </section>
+
+        <!-- LAS 10 DIFERENCIAS -->
+        <section id="differences" class="game-container hidden">
+            <h2 class="game-title">Encuentra las 10 Diferencias</h2>
+            <div class="differences-counter" id="differencesCounter">Diferencias encontradas: 0 / 10</div>
+            <div class="differences-layout">
+                <div class="house-container" id="house1"></div>
+                <div class="house-container" id="house2"></div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-hint" onclick="giveDifferenceHint()">💡 Pista</button>
+                <button class="btn btn-reset" onclick="resetDifferences()">🔄 Reiniciar</button>
+            </div>
+        </section>
+
+        <!-- BUSCAMINAS -->
+        <section id="minesweeper" class="game-container hidden">
+            <h2 class="game-title">Buscaminas Relajante</h2>
+            <div class="minesweeper-info">
+                <div class="info-item">
+                    <span>💣 Minas: 10</span>
+                </div>
+                <div class="info-item">
+                    <span id="remainingCells">Casillas restantes: 54</span>
+                </div>
+                <div class="info-item">
+                    <span id="progressPercent">Progreso: 0%</span>
+                </div>
+            </div>
+            <div class="minesweeper-grid" id="minesweeperGrid"></div>
+            <div class="action-buttons">
+                <button class="btn btn-hint" onclick="revealSafeZone()">💡 Revelar Zona Segura</button>
+                <button class="btn btn-reset" onclick="resetMinesweeper()">🔄 Reiniciar</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="message-display" id="messageDisplay">
+            ¡Bienvenido! Selecciona un juego y diviértete ejercitando tu mente 🎉
+        </div>
+    </footer>
+
+    <script>
+        // ============================================
+        // CONFIGURACIÓN Y CONSTANTES
+        // ============================================
+        const MESSAGES = {
+            welcome: '¡Bienvenido! Selecciona un juego y diviértete ejercitando tu mente 🎉',
+            crosswordCorrect: ['¡Fantástico!', '¡Muy bien!', '¡Excelente memoria!', '¡Perfecto!', '¡Eres brillante!'],
+            crosswordHint: ['Las pistas son para usarse, ¡adelante!', '¡Aquí tienes una ayudita!', '¡Un empujoncito nunca está de más!'],
+            crosswordComplete: '🎉 ¡Increíble! Has completado el crucigrama. ¡Eres un maestro de las palabras!',
+            differenceFound: ['¡Qué ojo tan agudo!', '¡Perfecto!', '¡Excelente!', '¡Muy bien observado!', '¡Eres un detective nato!'],
+            differenceHint: ['¡Mira con atención esta zona!', '¡Aquí hay algo diferente!', '¡Fíjate bien aquí!'],
+            differenceComplete: '🎉 ¡Increíble! Encontraste las 10 diferencias. ¡Tienes una vista excepcional!',
+            minesweeperSafe: ['¡Buen razonamiento!', '¡Vas muy bien!', '¡Genial! Esta zona está despejada', '¡Perfecto!'],
+            minesweeperMine: ['⚠️ Cuidado, había una mina aquí. ¡Pero puedes continuar!', '¡Ups! Mina encontrada, pero sigue adelante'],
+            minesweeperComplete: '🎉 ¡Increíble! Has completado el desafío. ¡Tu lógica es impresionante!'
+        };
+
+        // ============================================
+        // ESTADO GLOBAL
+        // ============================================
+        let currentGame = 'crossword';
+        let messageTimeout = null;
+
+        // ============================================
+        // UTILIDADES GENERALES
+        // ============================================
+        function showMessage(message) {
+            const messageDisplay = document.getElementById('messageDisplay');
+            messageDisplay.textContent = message;
+            messageDisplay.style.animation = 'none';
+            setTimeout(() => messageDisplay.style.animation = 'fadeIn 0.5s ease', 10);
+        }
+
+        function getRandomMessage(messageArray) {
+            return messageArray[Math.floor(Math.random() * messageArray.length)];
+        }
+
+        // ============================================
+        // NAVEGACIÓN ENTRE JUEGOS
+        // ============================================
+        document.querySelectorAll('.game-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const game = this.dataset.game;
+
+                // Actualizar botones
+                document.querySelectorAll('.game-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // Mostrar juego correspondiente
+                document.querySelectorAll('.game-container').forEach(container => {
+                    container.classList.add('hidden');
+                });
+                document.getElementById(game).classList.remove('hidden');
+
+                currentGame = game;
+
+                // Mensaje de bienvenida específico
+                const welcomeMessages = {
+                    crossword: '¡Vamos a completar este crucigrama! 📝',
+                    differences: '¡A encontrar las 10 diferencias! 🔍',
+                    minesweeper: '¡Usa tu lógica para revelar todas las casillas seguras! 💎'
+                };
+                showMessage(welcomeMessages[game]);
+            });
+        });
+
+        // ============================================
+        // CRUCIGRAMA
+        // ============================================
+        const crosswordData = {
+            grid: [
+                [' ', ' ', 'S', ' ', ' ', ' '],
+                ['C', 'A', 'S', 'A', ' ', ' '],
+                [' ', ' ', 'O', ' ', 'L', ' '],
+                [' ', 'L', 'U', 'N', 'A', ' '],
+                [' ', ' ', 'L', ' ', 'M', ' '],
+                [' ', ' ', ' ', ' ', 'O', 'R']
+            ],
+            words: [
+                { word: 'CASA', row: 1, col: 0, dir: 'H', num: 1, clue: 'Lugar donde vivimos' },
+                { word: 'LUNA', row: 3, col: 1, dir: 'H', num: 2, clue: 'Satélite natural de la Tierra' },
+                { word: 'SOL', row: 0, col: 2, dir: 'V', num: 3, clue: 'Estrella que nos da luz y calor' },
+                { word: 'AMOR', row: 2, col: 4, dir: 'V', num: 4, clue: 'Sentimiento profundo de cariño' }
+            ]
+        };
+
+        let currentWord = null;
+        let crosswordState = {};
+
+        function initCrossword() {
+            const grid = document.getElementById('crosswordGrid');
+            const horizontalClues = document.getElementById('horizontalClues');
+            const verticalClues = document.getElementById('verticalClues');
+
+            grid.innerHTML = '';
+            horizontalClues.innerHTML = '';
+            verticalClues.innerHTML = '';
+            crosswordState = {};
+
+            // Crear grid
+            for (let i = 0; i < 6; i++) {
+                for (let j = 0; j < 6; j++) {
+                    const cell = document.createElement('div');
+                    const letter = crosswordData.grid[i][j];
+
+                    if (letter === ' ') {
+                        cell.className = 'crossword-cell blocked';
+                    } else {
+                        cell.className = 'crossword-cell';
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.maxLength = 1;
+                        input.dataset.row = i;
+                        input.dataset.col = j;
+                        input.dataset.answer = letter;
+
+                        input.addEventListener('input', handleCrosswordInput);
+                        input.addEventListener('focus', handleCrosswordFocus);
+
+                        // Agregar número de palabra si es inicio
+                        const wordStart = crosswordData.words.find(w => w.row === i && w.col === j);
+                        if (wordStart) {
+                            const numSpan = document.createElement('span');
+                            numSpan.className = 'cell-number';
+                            numSpan.textContent = wordStart.num;
+                            cell.appendChild(numSpan);
+                        }
+
+                        cell.appendChild(input);
+                        crosswordState[`${i}-${j}`] = '';
+                    }
+
+                    grid.appendChild(cell);
+                }
+            }
+
+            // Crear pistas
+            crosswordData.words.forEach(word => {
+                const clueDiv = document.createElement('div');
+                clueDiv.className = 'clue-item';
+                clueDiv.innerHTML = `<strong>${word.num}.</strong> ${word.clue} (${word.word.length} letras)`;
+                clueDiv.addEventListener('click', () => selectWord(word));
+
+                if (word.dir === 'H') {
+                    horizontalClues.appendChild(clueDiv);
+                } else {
+                    verticalClues.appendChild(clueDiv);
+                }
+            });
+        }
+
+        function handleCrosswordInput(e) {
+            const input = e.target;
+            const value = input.value.toUpperCase();
+            const row = parseInt(input.dataset.row);
+            const col = parseInt(input.dataset.col);
+            const answer = input.dataset.answer;
+
+            input.value = value;
+            crosswordState[`${row}-${col}`] = value;
+
+            // Validar letra
+            const cell = input.parentElement;
+            if (value === answer) {
+                cell.classList.add('correct');
+                cell.classList.remove('incorrect');
+                showMessage(getRandomMessage(MESSAGES.crosswordCorrect));
+                checkCrosswordComplete();
+            } else if (value !== '') {
+                cell.classList.add('incorrect');
+                cell.classList.remove('correct');
+            } else {
+                cell.classList.remove('correct', 'incorrect');
+            }
+
+            // Mover al siguiente input
+            if (value && currentWord) {
+                moveToNextCell(row, col);
+            }
+        }
+
+        function handleCrosswordFocus(e) {
+            const row = parseInt(e.target.dataset.row);
+            const col = parseInt(e.target.dataset.col);
+
+            // Encontrar palabra que contiene esta celda
+            const word = crosswordData.words.find(w => {
+                if (w.dir === 'H') {
+                    return w.row === row && col >= w.col && col < w.col + w.word.length;
+                } else {
+                    return w.col === col && row >= w.row && row < w.row + w.word.length;
+                }
+            });
+
+            if (word) selectWord(word);
+        }
+
+        function selectWord(word) {
+            currentWord = word;
+
+            // Limpiar selección anterior
+            document.querySelectorAll('.crossword-cell').forEach(cell => {
+                cell.classList.remove('selected');
+            });
+
+            // Resaltar palabra
+            for (let i = 0; i < word.word.length; i++) {
+                let row, col;
+                if (word.dir === 'H') {
+                    row = word.row;
+                    col = word.col + i;
+                } else {
+                    row = word.row + i;
+                    col = word.col;
+                }
+
+                const input = document.querySelector(`input[data-row="${row}"][data-col="${col}"]`);
+                if (input) {
+                    input.parentElement.classList.add('selected');
+                }
+            }
+
+            // Focus en primera celda vacía
+            for (let i = 0; i < word.word.length; i++) {
+                let row, col;
+                if (word.dir === 'H') {
+                    row = word.row;
+                    col = word.col + i;
+                } else {
+                    row = word.row + i;
+                    col = word.col;
+                }
+
+                const input = document.querySelector(`input[data-row="${row}"][data-col="${col}"]`);
+                if (input && !input.value) {
+                    input.focus();
+                    return;
+                }
+            }
+        }
+
+        function moveToNextCell(row, col) {
+            if (!currentWord) return;
+
+            let nextRow = row, nextCol = col;
+
+            if (currentWord.dir === 'H') {
+                nextCol++;
+            } else {
+                nextRow++;
+            }
+
+            const nextInput = document.querySelector(`input[data-row="${nextRow}"][data-col="${nextCol}"]`);
+            if (nextInput) {
+                nextInput.focus();
+            }
+        }
+
+        function giveCrosswordHint() {
+            if (!currentWord) {
+                showMessage('Primero haz clic en una palabra del crucigrama');
+                return;
+            }
+
+            // Encontrar primera letra vacía o incorrecta
+            for (let i = 0; i < currentWord.word.length; i++) {
+                let row, col;
+                if (currentWord.dir === 'H') {
+                    row = currentWord.row;
+                    col = currentWord.col + i;
+                } else {
+                    row = currentWord.row + i;
+                    col = currentWord.col;
+                }
+
+                const input = document.querySelector(`input[data-row="${row}"][data-col="${col}"]`);
+                if (input && input.value !== input.dataset.answer) {
+                    input.value = input.dataset.answer;
+                    input.parentElement.classList.add('correct');
+                    input.parentElement.classList.remove('incorrect');
+                    crosswordState[`${row}-${col}`] = input.dataset.answer;
+                    showMessage(getRandomMessage(MESSAGES.crosswordHint));
+                    checkCrosswordComplete();
+                    return;
+                }
+            }
+
+            showMessage('¡Esta palabra ya está completa! Prueba con otra.');
+        }
+
+        function verifyCrossword() {
+            let correct = 0, total = 0;
+
+            document.querySelectorAll('.crossword-cell input').forEach(input => {
+                total++;
+                if (input.value.toUpperCase() === input.dataset.answer) {
+                    correct++;
+                }
+            });
+
+            const percentage = Math.round((correct / total) * 100);
+            showMessage(`Has completado el ${percentage}% del crucigrama. ${correct} de ${total} letras correctas.`);
+        }
+
+        function checkCrosswordComplete() {
+            const allCorrect = Array.from(document.querySelectorAll('.crossword-cell input')).every(input => {
+                return input.value.toUpperCase() === input.dataset.answer;
+            });
+
+            if (allCorrect) {
+                showMessage(MESSAGES.crosswordComplete);
+
+                // Marcar pistas como completadas
+                document.querySelectorAll('.clue-item').forEach(clue => {
+                    clue.classList.add('completed');
+                });
+            }
+        }
+
+        function resetCrossword() {
+            document.querySelectorAll('.crossword-cell input').forEach(input => {
+                input.value = '';
+                input.parentElement.classList.remove('correct', 'incorrect', 'selected');
+            });
+
+            document.querySelectorAll('.clue-item').forEach(clue => {
+                clue.classList.remove('completed');
+            });
+
+            crosswordState = {};
+            currentWord = null;
+            showMessage('¡Crucigrama reiniciado! Comienza de nuevo cuando quieras.');
+        }
+
+        // ============================================
+        // LAS 10 DIFERENCIAS
+        // ============================================
+        const differences = [
+            { id: 'curtains', house: 1, desc: 'Cortinas en ventana izquierda' },
+            { id: 'door-color', house: 2, desc: 'Color de la puerta' },
+            { id: 'apples', house: 1, desc: 'Manzanas en el árbol' },
+            { id: 'sky-object', house: 2, desc: 'Luna en lugar de sol' },
+            { id: 'cloud-extra', house: 2, desc: 'Nube adicional' },
+            { id: 'flower', house: 1, desc: 'Flor en el jardín' },
+            { id: 'window-state', house: 2, desc: 'Ventana derecha abierta' },
+            { id: 'smoke', house: 1, desc: 'Humo en la chimenea' },
+            { id: 'path-color', house: 2, desc: 'Piedras del camino' },
+            { id: 'mailbox', house: 1, desc: 'Buzón de correo' }
+        ];
+
+        let foundDifferences = new Set();
+        let differenceElements = [];
+
+        function initDifferences() {
+            const house1 = document.getElementById('house1');
+            const house2 = document.getElementById('house2');
+
+            house1.innerHTML = '';
+            house2.innerHTML = '';
+            foundDifferences = new Set();
+            differenceElements = [];
+
+            createHouse(house1, 1);
+            createHouse(house2, 2);
+
+            updateDifferencesCounter();
+
+            // Event listeners para detectar clicks
+            house1.addEventListener('click', (e) => handleDifferenceClick(e, 1));
+            house2.addEventListener('click', (e) => handleDifferenceClick(e, 2));
+        }
+
+        function createHouse(container, houseNum) {
+            container.innerHTML = `
+                <div class="sky"></div>
+                <div class="ground"></div>
+
+                ${houseNum === 1 ? '<div class="sun"></div>' : '<div class="moon"></div>'}
+
+                <div class="cloud cloud1"></div>
+                <div class="cloud cloud2"></div>
+                ${houseNum === 2 ? '<div class="cloud cloud-extra"></div>' : ''}
+
+                <div class="roof"></div>
+                <div class="chimney">
+                    ${houseNum === 1 ? '<div class="smoke"></div>' : ''}
+                </div>
+
+                <div class="house-body"></div>
+
+                <div class="door ${houseNum === 1 ? 'door-red' : 'door-blue'}"></div>
+
+                <div class="window window-left">
+                    ${houseNum === 1 ? '<div class="curtain curtain-left"></div><div class="curtain curtain-right"></div>' : ''}
+                </div>
+
+                <div class="window window-right ${houseNum === 2 ? 'window-open' : ''}"></div>
+
+                <div class="tree">
+                    <div class="leaves">
+                        ${houseNum === 1 ? '<div class="apple apple1"></div><div class="apple apple2"></div><div class="apple apple3"></div>' : ''}
+                    </div>
+                    <div class="trunk"></div>
+                </div>
+
+                ${houseNum === 1 ? '<div class="flower"><div class="petals"></div><div class="stem"></div></div>' : ''}
+
+                <div class="path">
+                    <div class="stone ${houseNum === 1 ? 'stone-gray' : 'stone-brown'}"></div>
+                    <div class="stone ${houseNum === 1 ? 'stone-gray' : 'stone-brown'}"></div>
+                    <div class="stone ${houseNum === 1 ? 'stone-gray' : 'stone-brown'}"></div>
+                </div>
+
+                ${houseNum === 1 ? '<div class="mailbox"><div class="mailbox-flag"></div></div>' : ''}
+            `;
+
+            // Guardar referencias a elementos de diferencias
+            if (houseNum === 1) {
+                differenceElements.push(
+                    { id: 'curtains', element: container.querySelector('.window-left'), house: 1 },
+                    { id: 'apples', element: container.querySelector('.leaves'), house: 1 },
+                    { id: 'sky-object', element: container.querySelector('.sun'), house: 1 },
+                    { id: 'flower', element: container.querySelector('.flower'), house: 1 },
+                    { id: 'smoke', element: container.querySelector('.smoke'), house: 1 },
+                    { id: 'mailbox', element: container.querySelector('.mailbox'), house: 1 }
+                );
+            } else {
+                differenceElements.push(
+                    { id: 'door-color', element: container.querySelector('.door'), house: 2 },
+                    { id: 'cloud-extra', element: container.querySelector('.cloud-extra'), house: 2 },
+                    { id: 'window-state', element: container.querySelector('.window-right'), house: 2 },
+                    { id: 'path-color', element: container.querySelector('.path'), house: 2 }
+                );
+            }
+        }
+
+        function handleDifferenceClick(e, houseNum) {
+            const clickedElement = e.target;
+
+            // Buscar si el click fue en un elemento de diferencia
+            for (const diff of differenceElements) {
+                if (diff.house === houseNum && (diff.element === clickedElement || diff.element.contains(clickedElement))) {
+                    if (!foundDifferences.has(diff.id)) {
+                        foundDifferences.add(diff.id);
+                        markDifference(clickedElement, houseNum, diff.id);
+                        updateDifferencesCounter();
+                        showMessage(getRandomMessage(MESSAGES.differenceFound));
+
+                        if (foundDifferences.size === 10) {
+                            setTimeout(() => {
+                                showMessage(MESSAGES.differenceComplete);
+                            }, 1000);
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+
+        function markDifference(element, houseNum, diffId) {
+            const container = document.getElementById(`house${houseNum}`);
+            const rect = element.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+
+            const marker = document.createElement('div');
+            marker.className = 'difference-marker';
+            marker.style.left = (rect.left - containerRect.left + rect.width / 2 - 25) + 'px';
+            marker.style.top = (rect.top - containerRect.top + rect.height / 2 - 25) + 'px';
+
+            container.appendChild(marker);
+
+            // Marcar también en la otra casa
+            const otherHouse = houseNum === 1 ? 2 : 1;
+            const otherContainer = document.getElementById(`house${otherHouse}`);
+            const otherDiff = differenceElements.find(d => d.id === diffId && d.house === otherHouse);
+
+            if (otherDiff && otherDiff.element) {
+                const otherRect = otherDiff.element.getBoundingClientRect();
+                const otherContainerRect = otherContainer.getBoundingClientRect();
+
+                const otherMarker = document.createElement('div');
+                otherMarker.className = 'difference-marker';
+                otherMarker.style.left = (otherRect.left - otherContainerRect.left + otherRect.width / 2 - 25) + 'px';
+                otherMarker.style.top = (otherRect.top - otherContainerRect.top + otherRect.height / 2 - 25) + 'px';
+
+                otherContainer.appendChild(otherMarker);
+            }
+        }
+
+        function updateDifferencesCounter() {
+            const counter = document.getElementById('differencesCounter');
+            counter.textContent = `Diferencias encontradas: ${foundDifferences.size} / 10`;
+        }
+
+        function giveDifferenceHint() {
+            // Encontrar una diferencia no encontrada
+            const notFound = differences.filter(d => !foundDifferences.has(d.id));
+
+            if (notFound.length === 0) {
+                showMessage('¡Ya encontraste todas las diferencias! ¡Excelente trabajo!');
+                return;
+            }
+
+            const hint = notFound[Math.floor(Math.random() * notFound.length)];
+            const hintElement = differenceElements.find(d => d.id === hint.id);
+
+            if (hintElement && hintElement.element) {
+                hintElement.element.classList.add('hint-highlight');
+                setTimeout(() => {
+                    hintElement.element.classList.remove('hint-highlight');
+                }, 3000);
+            }
+
+            showMessage(getRandomMessage(MESSAGES.differenceHint));
+        }
+
+        function resetDifferences() {
+            foundDifferences = new Set();
+            initDifferences();
+            showMessage('¡Juego reiniciado! Busca las 10 diferencias de nuevo.');
+        }
+
+        // ============================================
+        // BUSCAMINAS
+        // ============================================
+        const GRID_SIZE = 8;
+        const MINE_COUNT = 10;
+        let mineField = [];
+        let revealedCells = new Set();
+        let flaggedCells = new Set();
+
+        function initMinesweeper() {
+            const grid = document.getElementById('minesweeperGrid');
+            grid.innerHTML = '';
+            mineField = [];
+            revealedCells = new Set();
+            flaggedCells = new Set();
+
+            // Inicializar campo
+            for (let i = 0; i < GRID_SIZE; i++) {
+                mineField[i] = [];
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    mineField[i][j] = { mine: false, count: 0, revealed: false, flagged: false };
+                }
+            }
+
+            // Colocar minas aleatoriamente
+            let minesPlaced = 0;
+            while (minesPlaced < MINE_COUNT) {
+                const row = Math.floor(Math.random() * GRID_SIZE);
+                const col = Math.floor(Math.random() * GRID_SIZE);
+
+                if (!mineField[row][col].mine) {
+                    mineField[row][col].mine = true;
+                    minesPlaced++;
+                }
+            }
+
+            // Calcular números
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    if (!mineField[i][j].mine) {
+                        mineField[i][j].count = countAdjacentMines(i, j);
+                    }
+                }
+            }
+
+            // Crear UI
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'mine-cell';
+                    cell.dataset.row = i;
+                    cell.dataset.col = j;
+
+                    cell.addEventListener('click', () => handleMineClick(i, j));
+                    cell.addEventListener('contextmenu', (e) => {
+                        e.preventDefault();
+                        toggleFlag(i, j);
+                    });
+
+                    grid.appendChild(cell);
+                }
+            }
+
+            updateMinesweeperInfo();
+        }
+
+        function countAdjacentMines(row, col) {
+            let count = 0;
+            for (let i = -1; i <= 1; i++) {
+                for (let j = -1; j <= 1; j++) {
+                    if (i === 0 && j === 0) continue;
+                    const newRow = row + i;
+                    const newCol = col + j;
+                    if (newRow >= 0 && newRow < GRID_SIZE && newCol >= 0 && newCol < GRID_SIZE) {
+                        if (mineField[newRow][newCol].mine) count++;
+                    }
+                }
+            }
+            return count;
+        }
+
+        function handleMineClick(row, col) {
+            if (mineField[row][col].revealed || mineField[row][col].flagged) return;
+
+            if (mineField[row][col].mine) {
+                revealMine(row, col);
+                showMessage(getRandomMessage(MESSAGES.minesweeperMine));
+            } else {
+                revealCell(row, col);
+                showMessage(getRandomMessage(MESSAGES.minesweeperSafe));
+                checkMinesweeperComplete();
+            }
+
+            updateMinesweeperInfo();
+        }
+
+        function revealCell(row, col) {
+            if (row < 0 || row >= GRID_SIZE || col < 0 || col >= GRID_SIZE) return;
+            if (mineField[row][col].revealed || mineField[row][col].mine) return;
+
+            mineField[row][col].revealed = true;
+            revealedCells.add(`${row}-${col}`);
+
+            const cellElement = document.querySelector(`.mine-cell[data-row="${row}"][data-col="${col}"]`);
+            cellElement.classList.add('revealed');
+
+            const count = mineField[row][col].count;
+            if (count > 0) {
+                cellElement.textContent = count;
+                cellElement.dataset.count = count;
+            } else {
+                // Auto-revelar adyacentes si count es 0
+                for (let i = -1; i <= 1; i++) {
+                    for (let j = -1; j <= 1; j++) {
+                        if (i === 0 && j === 0) continue;
+                        revealCell(row + i, col + j);
+                    }
+                }
+            }
+        }
+
+        function revealMine(row, col) {
+            mineField[row][col].revealed = true;
+            const cellElement = document.querySelector(`.mine-cell[data-row="${row}"][data-col="${col}"]`);
+            cellElement.classList.add('revealed', 'mine-revealed');
+            cellElement.textContent = '⚠️';
+        }
+
+        function toggleFlag(row, col) {
+            if (mineField[row][col].revealed) return;
+
+            mineField[row][col].flagged = !mineField[row][col].flagged;
+            const cellElement = document.querySelector(`.mine-cell[data-row="${row}"][data-col="${col}"]`);
+
+            if (mineField[row][col].flagged) {
+                cellElement.classList.add('flagged');
+                cellElement.textContent = '🚩';
+                flaggedCells.add(`${row}-${col}`);
+            } else {
+                cellElement.classList.remove('flagged');
+                cellElement.textContent = '';
+                flaggedCells.delete(`${row}-${col}`);
+            }
+        }
+
+        function revealSafeZone() {
+            // Encontrar una zona 3x3 sin minas
+            for (let attempts = 0; attempts < 100; attempts++) {
+                const centerRow = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+                const centerCol = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+                let hasMines = false;
+                let allRevealed = true;
+
+                for (let i = -1; i <= 1; i++) {
+                    for (let j = -1; j <= 1; j++) {
+                        const row = centerRow + i;
+                        const col = centerCol + j;
+                        if (mineField[row][col].mine) hasMines = true;
+                        if (!mineField[row][col].revealed) allRevealed = false;
+                    }
+                }
+
+                if (!hasMines && !allRevealed) {
+                    // Revelar zona
+                    for (let i = -1; i <= 1; i++) {
+                        for (let j = -1; j <= 1; j++) {
+                            revealCell(centerRow + i, centerCol + j);
+                        }
+                    }
+                    showMessage('¡Zona segura revelada! ¡Sigue así!');
+                    updateMinesweeperInfo();
+                    checkMinesweeperComplete();
+                    return;
+                }
+            }
+
+            // Si no encuentra zona 3x3, revelar una celda segura
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    if (!mineField[i][j].mine && !mineField[i][j].revealed) {
+                        revealCell(i, j);
+                        showMessage('¡Casilla segura revelada!');
+                        updateMinesweeperInfo();
+                        checkMinesweeperComplete();
+                        return;
+                    }
+                }
+            }
+
+            showMessage('¡Ya revelaste todas las casillas seguras! ¡Felicitaciones!');
+        }
+
+        function updateMinesweeperInfo() {
+            const totalCells = GRID_SIZE * GRID_SIZE;
+            const safeCells = totalCells - MINE_COUNT;
+            const remaining = safeCells - revealedCells.size;
+            const progress = Math.round((revealedCells.size / safeCells) * 100);
+
+            document.getElementById('remainingCells').textContent = `Casillas restantes: ${remaining}`;
+            document.getElementById('progressPercent').textContent = `Progreso: ${progress}%`;
+        }
+
+        function checkMinesweeperComplete() {
+            const totalCells = GRID_SIZE * GRID_SIZE;
+            const safeCells = totalCells - MINE_COUNT;
+
+            if (revealedCells.size === safeCells) {
+                setTimeout(() => {
+                    showMessage(MESSAGES.minesweeperComplete);
+                }, 500);
+            }
+        }
+
+        function resetMinesweeper() {
+            initMinesweeper();
+            showMessage('¡Buscaminas reiniciado! Comienza de nuevo cuando quieras.');
+        }
+
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            initCrossword();
+            initDifferences();
+            initMinesweeper();
+            showMessage(MESSAGES.welcome);
+        });
+    </script>
+</body>
+</html>
