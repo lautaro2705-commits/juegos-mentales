@@ -815,9 +815,12 @@
 
         <!-- LAS 10 DIFERENCIAS -->
         <section id="differences" class="game-container hidden">
-            <h2 class="game-title">Encuentra las 10 Diferencias - Desafío Avanzado</h2>
-            <p style="text-align: center; font-size: 18px; color: #6B7280; margin-bottom: 16px;">
-                ⚠️ Diferencias muy sutiles: tamaños, posiciones y proporciones ligeramente diferentes
+            <h2 class="game-title">Encuentra las 10 Diferencias - Desafío Experto</h2>
+            <p style="text-align: center; font-size: 18px; color: #DC2626; font-weight: 600; margin-bottom: 16px; background: #FEE2E2; padding: 12px; border-radius: 8px;">
+                ⚠️ NIVEL EXPERTO: Diferencias de 1-2 píxeles - Casi imperceptibles - Requiere máxima concentración
+            </p>
+            <p style="text-align: center; font-size: 16px; color: #6B7280; margin-bottom: 16px;">
+                💡 Pista: Observa cuidadosamente tamaños, posiciones y proporciones. Usa el botón "Pista" si necesitas ayuda.
             </p>
             <div class="differences-counter" id="differencesCounter">Diferencias encontradas: 0 / 10</div>
             <div class="differences-layout">
@@ -1416,20 +1419,73 @@
         }
 
         // ============================================
-        // LAS 10 DIFERENCIAS (SUTILES PARA ADULTOS)
+        // LAS 10 DIFERENCIAS (EXTREMADAMENTE SUTILES PARA ADULTOS)
         // ============================================
-        const differences = [
-            { id: 'sun', house: 2, desc: 'Tamaño del sol ligeramente diferente' },
-            { id: 'cloud1', house: 2, desc: 'Posición de nube izquierda' },
-            { id: 'chimney', house: 2, desc: 'Altura de chimenea' },
-            { id: 'door-handle', house: 2, desc: 'Posición de la manija' },
-            { id: 'tree', house: 2, desc: 'Altura del árbol' },
-            { id: 'leaves', house: 2, desc: 'Tamaño del follaje' },
-            { id: 'petals', house: 2, desc: 'Tamaño de la flor' },
-            { id: 'house-body', house: 2, desc: 'Ancho de la casa' },
-            { id: 'window-left', house: 2, desc: 'Ancho de ventana izquierda' },
-            { id: 'roof', house: 2, desc: 'Inclinación del techo' }
-        ];
+        // Diferencias que varían según el nivel - apenas perceptibles visualmente
+        const differencesConfig = {
+            1: [
+                { id: 'sun', house: 2, desc: 'Tamaño del sol (diferencia de 5px)', tolerance: 30 },
+                { id: 'cloud1', house: 2, desc: 'Posición horizontal de nube (5px)', tolerance: 25 },
+                { id: 'chimney', house: 2, desc: 'Altura de chimenea (5px diferencia)', tolerance: 30 },
+                { id: 'door-handle', house: 2, desc: 'Posición de manija (2px)', tolerance: 20 },
+                { id: 'tree', house: 2, desc: 'Posición vertical árbol (3px)', tolerance: 35 },
+                { id: 'leaves', house: 2, desc: 'Diámetro del follaje (3px)', tolerance: 40 },
+                { id: 'petals', house: 2, desc: 'Tamaño de pétalos (2px)', tolerance: 25 },
+                { id: 'house-body', house: 2, desc: 'Ancho de la casa (5px)', tolerance: 50 },
+                { id: 'window-left', house: 2, desc: 'Ancho ventana (2px)', tolerance: 30 },
+                { id: 'roof', house: 2, desc: 'Ángulo del techo (5px borde)', tolerance: 50 }
+            ],
+            2: [
+                { id: 'sun', house: 2, desc: 'Diámetro solar (3px)', tolerance: 30 },
+                { id: 'cloud2', house: 2, desc: 'Ancho de nube (5px)', tolerance: 40 },
+                { id: 'chimney', house: 2, desc: 'Grosor chimenea (2px)', tolerance: 30 },
+                { id: 'house-body', house: 2, desc: 'Ancho pared (5px)', tolerance: 50 },
+                { id: 'window-right', house: 2, desc: 'Altura ventana (2px)', tolerance: 30 },
+                { id: 'leaves', house: 2, desc: 'Copa del árbol (3px)', tolerance: 40 },
+                { id: 'mailbox', house: 2, desc: 'Alto del buzón (2px)', tolerance: 30 },
+                { id: 'path', house: 2, desc: 'Ancho del camino (3px)', tolerance: 35 },
+                { id: 'door', house: 2, desc: 'Ancho puerta (2px)', tolerance: 35 },
+                { id: 'stem', house: 2, desc: 'Altura tallo flor (2px)', tolerance: 25 }
+            ],
+            3: [
+                { id: 'sun', house: 2, desc: 'Tamaño del sol (2px)', tolerance: 30 },
+                { id: 'cloud3', house: 2, desc: 'Posición vertical nube (5px)', tolerance: 35 },
+                { id: 'roof', house: 2, desc: 'Ancho del techo (5px)', tolerance: 50 },
+                { id: 'window-left', house: 2, desc: 'Posición vertical (2px)', tolerance: 30 },
+                { id: 'trunk', house: 2, desc: 'Grosor tronco (2px)', tolerance: 25 },
+                { id: 'chimney', house: 2, desc: 'Posición vertical (3px)', tolerance: 35 },
+                { id: 'house-body', house: 2, desc: 'Posición vertical (2px)', tolerance: 50 },
+                { id: 'door', house: 2, desc: 'Borde de puerta (1px)', tolerance: 35 },
+                { id: 'apple', house: 2, desc: 'Tamaño manzanas (1px)', tolerance: 20 },
+                { id: 'mailbox-flag', house: 2, desc: 'Ancho bandera (1px)', tolerance: 20 }
+            ],
+            4: [
+                { id: 'sun', house: 2, desc: 'Diámetro (1px diferencia)', tolerance: 30 },
+                { id: 'cloud1', house: 2, desc: 'Altura de nube (3px)', tolerance: 35 },
+                { id: 'house-body', house: 2, desc: 'Altura de pared (5px)', tolerance: 50 },
+                { id: 'window-right', house: 2, desc: 'Posición vertical (2px)', tolerance: 30 },
+                { id: 'leaves', house: 2, desc: 'Posición horizontal (1px)', tolerance: 40 },
+                { id: 'chimney', house: 2, desc: 'Desplazamiento horizontal (3px)', tolerance: 35 },
+                { id: 'door', house: 2, desc: 'Radio de esquinas (2px)', tolerance: 35 },
+                { id: 'stone', house: 2, desc: 'Altura piedras (1px)', tolerance: 30 },
+                { id: 'petals', house: 2, desc: 'Posición horizontal (1px)', tolerance: 25 },
+                { id: 'mailbox', house: 2, desc: 'Ancho del buzón (2px)', tolerance: 30 }
+            ],
+            5: [
+                { id: 'sun', house: 2, desc: 'Radio solar (2px)', tolerance: 30 },
+                { id: 'cloud2', house: 2, desc: 'Posición horizontal (5px)', tolerance: 40 },
+                { id: 'roof', house: 2, desc: 'Altura del pico (2px)', tolerance: 50 },
+                { id: 'window-left', house: 2, desc: 'Posición horizontal (2px)', tolerance: 30 },
+                { id: 'trunk', house: 2, desc: 'Altura del tronco (2px)', tolerance: 30 },
+                { id: 'house-body', house: 2, desc: 'Grosor del borde (1px)', tolerance: 50 },
+                { id: 'door-handle', house: 2, desc: 'Tamaño de manija (1px)', tolerance: 20 },
+                { id: 'apple', house: 2, desc: 'Posición primera manzana (1px)', tolerance: 20 },
+                { id: 'smoke', house: 2, desc: 'Posición horizontal humo (1px)', tolerance: 25 },
+                { id: 'stem', house: 2, desc: 'Grosor del tallo (1px)', tolerance: 20 }
+            ]
+        };
+
+        let differences = differencesConfig[1];
 
         let foundDifferences = new Set();
         let differenceElements = [];
@@ -1443,6 +1499,9 @@
             foundDifferences = new Set();
             differenceElements = [];
 
+            // Actualizar diferencias según el nivel actual
+            differences = differencesConfig[currentLevel] || differencesConfig[1];
+
             createHouse(house1, 1);
             createHouse(house2, 2);
 
@@ -1453,67 +1512,68 @@
         }
 
         function createHouse(container, houseNum) {
-            // Variaciones sutiles según nivel - MÁS DIFÍCILES PARA ADULTOS
+            // Variaciones EXTREMADAMENTE SUTILES - diferencias de 1-2px máximo
+            // Estas diferencias son casi imperceptibles y requieren mucha atención
             const levelVariations = {
                 1: {
-                    sunSize: houseNum === 2 ? '50px' : '55px',
-                    cloud1Left: houseNum === 2 ? '65px' : '60px',
-                    chimneyHeight: houseNum === 2 ? '60px' : '65px',
-                    handleRight: houseNum === 2 ? '10px' : '8px',
-                    windowLeftWidth: houseNum === 2 ? '50px' : '52px',
-                    treeBottom: houseNum === 2 ? '72px' : '75px',
-                    roofBorder: houseNum === 2 ? '100px' : '105px',
-                    smokeSize: houseNum === 2 ? '18px' : '20px',
-                    doorHeight: houseNum === 2 ? '92px' : '95px',
-                    petalSize: houseNum === 2 ? '24px' : '26px'
+                    sunSize: houseNum === 2 ? '54px' : '55px',        // 1px diferencia
+                    cloud1Left: houseNum === 2 ? '61px' : '60px',     // 1px diferencia
+                    chimneyHeight: houseNum === 2 ? '64px' : '65px',  // 1px diferencia
+                    handleRight: houseNum === 2 ? '9px' : '8px',      // 1px diferencia
+                    windowLeftWidth: houseNum === 2 ? '51px' : '52px',// 1px diferencia
+                    treeBottom: houseNum === 2 ? '74px' : '75px',     // 1px diferencia
+                    roofBorder: houseNum === 2 ? '104px' : '105px',   // 1px diferencia
+                    smokeSize: houseNum === 2 ? '19px' : '20px',      // 1px diferencia
+                    doorHeight: houseNum === 2 ? '94px' : '95px',     // 1px diferencia
+                    petalSize: houseNum === 2 ? '25px' : '26px'       // 1px diferencia
                 },
                 2: {
-                    sunSize: houseNum === 2 ? '52px' : '55px',
-                    cloud2Width: houseNum === 2 ? '75px' : '70px',
-                    chimneyWidth: houseNum === 2 ? '30px' : '32px',
-                    houseWidth: houseNum === 2 ? '265px' : '270px',
-                    windowRightHeight: houseNum === 2 ? '50px' : '52px',
-                    leavesSize: houseNum === 2 ? '62px' : '65px',
-                    mailboxHeight: houseNum === 2 ? '40px' : '42px',
-                    pathWidth: houseNum === 2 ? '62px' : '65px',
-                    doorWidth: houseNum === 2 ? '63px' : '65px',
-                    stemHeight: houseNum === 2 ? '30px' : '32px'
+                    sunSize: houseNum === 2 ? '54px' : '55px',        // 1px diferencia
+                    cloud2Width: houseNum === 2 ? '69px' : '70px',    // 1px diferencia
+                    chimneyWidth: houseNum === 2 ? '31px' : '32px',   // 1px diferencia
+                    houseWidth: houseNum === 2 ? '269px' : '270px',   // 1px diferencia
+                    windowRightHeight: houseNum === 2 ? '51px' : '52px', // 1px diferencia
+                    leavesSize: houseNum === 2 ? '64px' : '65px',     // 1px diferencia
+                    mailboxHeight: houseNum === 2 ? '41px' : '42px',  // 1px diferencia
+                    pathWidth: houseNum === 2 ? '64px' : '65px',      // 1px diferencia
+                    doorWidth: houseNum === 2 ? '64px' : '65px',      // 1px diferencia
+                    stemHeight: houseNum === 2 ? '31px' : '32px'      // 1px diferencia
                 },
                 3: {
-                    sunSize: houseNum === 2 ? '53px' : '55px',
-                    cloud3Top: houseNum === 2 ? '125px' : '120px',
-                    roofLeft: houseNum === 2 ? '145px' : '150px',
-                    windowLeftBottom: houseNum === 2 ? '217px' : '215px',
-                    trunkWidth: houseNum === 2 ? '20px' : '22px',
-                    chimneyBottom: houseNum === 2 ? '378px' : '375px',
-                    houseBottom: houseNum === 2 ? '128px' : '130px',
-                    doorBorder: houseNum === 2 ? '2px' : '3px',
-                    appleSize: houseNum === 2 ? '11px' : '10px',
-                    flagWidth: houseNum === 2 ? '14px' : '13px'
+                    sunSize: houseNum === 2 ? '54px' : '55px',        // 1px diferencia
+                    cloud3Top: houseNum === 2 ? '121px' : '120px',    // 1px diferencia
+                    roofLeft: houseNum === 2 ? '149px' : '150px',     // 1px diferencia
+                    windowLeftBottom: houseNum === 2 ? '216px' : '215px', // 1px diferencia
+                    trunkWidth: houseNum === 2 ? '21px' : '22px',     // 1px diferencia
+                    chimneyBottom: houseNum === 2 ? '376px' : '375px',// 1px diferencia
+                    houseBottom: houseNum === 2 ? '129px' : '130px',  // 1px diferencia
+                    doorBorder: houseNum === 2 ? '2.5px' : '3px',     // 0.5px diferencia
+                    appleSize: houseNum === 2 ? '10.5px' : '10px',    // 0.5px diferencia
+                    flagWidth: houseNum === 2 ? '13.5px' : '13px'     // 0.5px diferencia
                 },
                 4: {
-                    sunSize: houseNum === 2 ? '54px' : '55px',
-                    cloud1Height: houseNum === 2 ? '32px' : '35px',
-                    houseHeight: houseNum === 2 ? '185px' : '190px',
-                    windowRightBottom: houseNum === 2 ? '217px' : '215px',
-                    leavesLeft: houseNum === 2 ? '-20px' : '-21px',
-                    chimneyTransform: houseNum === 2 ? '-72px' : '-75px',
-                    doorRadius: houseNum === 2 ? '6px' : '8px',
-                    stoneHeight: houseNum === 2 ? '9px' : '8px',
-                    petalLeft: houseNum === 2 ? '-10px' : '-11px',
-                    mailboxWidth: houseNum === 2 ? '30px' : '32px'
+                    sunSize: houseNum === 2 ? '54.5px' : '55px',      // 0.5px diferencia
+                    cloud1Height: houseNum === 2 ? '34px' : '35px',   // 1px diferencia
+                    houseHeight: houseNum === 2 ? '189px' : '190px',  // 1px diferencia
+                    windowRightBottom: houseNum === 2 ? '216px' : '215px', // 1px diferencia
+                    leavesLeft: houseNum === 2 ? '-20.5px' : '-21px', // 0.5px diferencia
+                    chimneyTransform: houseNum === 2 ? '-74px' : '-75px', // 1px diferencia
+                    doorRadius: houseNum === 2 ? '7px' : '8px',       // 1px diferencia
+                    stoneHeight: houseNum === 2 ? '8.5px' : '8px',    // 0.5px diferencia
+                    petalLeft: houseNum === 2 ? '-10.5px' : '-11px',  // 0.5px diferencia
+                    mailboxWidth: houseNum === 2 ? '31px' : '32px'    // 1px diferencia
                 },
                 5: {
-                    sunSize: houseNum === 2 ? '53px' : '55px',
-                    cloud2Left: houseNum === 2 ? '255px' : '250px',
-                    roofBorder: houseNum === 2 ? '103px' : '105px',
-                    windowLeftLeft: houseNum === 2 ? '112px' : '110px',
-                    trunkHeight: houseNum === 2 ? '43px' : '45px',
-                    houseBodyBorder: houseNum === 2 ? '2px' : '3px',
-                    handleSize: houseNum === 2 ? '9px' : '8px',
-                    appleTop1: houseNum === 2 ? '16px' : '15px',
-                    smokeLeft: houseNum === 2 ? '7px' : '6px',
-                    stemWidth: houseNum === 2 ? '5px' : '4px'
+                    sunSize: houseNum === 2 ? '54px' : '55px',        // 1px diferencia
+                    cloud2Left: houseNum === 2 ? '251px' : '250px',   // 1px diferencia
+                    roofBorder: houseNum === 2 ? '104px' : '105px',   // 1px diferencia
+                    windowLeftLeft: houseNum === 2 ? '111px' : '110px', // 1px diferencia
+                    trunkHeight: houseNum === 2 ? '44px' : '45px',    // 1px diferencia
+                    houseBodyBorder: houseNum === 2 ? '2.5px' : '3px',// 0.5px diferencia
+                    handleSize: houseNum === 2 ? '8.5px' : '8px',     // 0.5px diferencia
+                    appleTop1: houseNum === 2 ? '15.5px' : '15px',    // 0.5px diferencia
+                    smokeLeft: houseNum === 2 ? '6.5px' : '6px',      // 0.5px diferencia
+                    stemWidth: houseNum === 2 ? '4.5px' : '4px'       // 0.5px diferencia
                 }
             };
 
@@ -1590,13 +1650,35 @@
         }
 
         function handleDifferenceClick(e, houseNum) {
-            const clickedElement = e.target;
+            const clickX = e.offsetX;
+            const clickY = e.offsetY;
+            const container = houseNum === 1 ? document.getElementById('house1') : document.getElementById('house2');
+            const containerRect = container.getBoundingClientRect();
+
+            // Convertir coordenadas relativas al contenedor
+            const absoluteX = e.clientX - containerRect.left;
+            const absoluteY = e.clientY - containerRect.top;
 
             for (const diff of differenceElements) {
-                if (diff.house === houseNum && (diff.element === clickedElement || diff.element.contains(clickedElement))) {
-                    if (!foundDifferences.has(diff.id)) {
+                if (diff.house === houseNum && !foundDifferences.has(diff.id)) {
+                    const element = diff.element;
+                    const rect = element.getBoundingClientRect();
+                    const elemX = rect.left - containerRect.left + rect.width / 2;
+                    const elemY = rect.top - containerRect.top + rect.height / 2;
+
+                    // Calcular distancia del click al centro del elemento
+                    const distance = Math.sqrt(
+                        Math.pow(absoluteX - elemX, 2) +
+                        Math.pow(absoluteY - elemY, 2)
+                    );
+
+                    // Usar tolerancia específica de la diferencia
+                    const diffConfig = differences.find(d => d.id === diff.id);
+                    const tolerance = diffConfig ? diffConfig.tolerance : 40;
+
+                    if (distance <= tolerance) {
                         foundDifferences.add(diff.id);
-                        markDifference(clickedElement, houseNum, diff.id);
+                        markDifference(element, houseNum, diff.id);
                         updateDifferencesCounter();
                         showMessage(getRandomMessage(MESSAGES.differenceFound));
 
