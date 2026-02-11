@@ -1,0 +1,1996 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Juegos Mentales - Desafío Avanzado</title>
+    <!-- V2.0: Crucigrama 13x13 + Diferencias Expertas 1-2px | Update: 2026-02-10 22:37 -->
+    <style>
+        /* ============================================
+           VARIABLES CSS Y RESET
+           ============================================ */
+        :root {
+            --color-fondo: #FAFAFA;
+            --color-texto: #222222;
+            --color-primario: #2563EB;
+            --color-exito: #22C55E;
+            --color-advertencia: #F59E0B;
+            --color-error: #EF4444;
+            --color-pista: #FBBF24;
+            --color-hover: #1E40AF;
+
+            --fuente-base: 20px;
+            --fuente-grande: 24px;
+            --fuente-titulo: 32px;
+
+            --espaciado-xs: 8px;
+            --espaciado-sm: 12px;
+            --espaciado-md: 16px;
+            --espaciado-lg: 24px;
+            --espaciado-xl: 32px;
+
+            --boton-altura: 60px;
+            --radio-borde: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            font-size: var(--fuente-base);
+            line-height: 1.6;
+            padding: var(--espaciado-lg);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* ============================================
+           UTILIDADES
+           ============================================ */
+        .hidden {
+            display: none !important;
+        }
+
+        .active {
+            background-color: var(--color-primario) !important;
+            color: white !important;
+        }
+
+        .correct {
+            background-color: #D1FAE5 !important;
+            border-color: var(--color-exito) !important;
+        }
+
+        .incorrect {
+            background-color: #FEE2E2 !important;
+            border-color: var(--color-error) !important;
+        }
+
+        .hint-highlight {
+            animation: pulse-hint 1.5s infinite;
+            border: 3px solid var(--color-pista) !important;
+        }
+
+        @keyframes pulse-hint {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(251, 191, 36, 0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============================================
+           HEADER Y NAVEGACIÓN
+           ============================================ */
+        header {
+            text-align: center;
+            margin-bottom: var(--espaciado-xl);
+        }
+
+        h1 {
+            font-size: var(--fuente-titulo);
+            color: var(--color-primario);
+            margin-bottom: var(--espaciado-lg);
+            font-weight: 700;
+        }
+
+        .game-selector {
+            display: flex;
+            gap: var(--espaciado-md);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .game-btn {
+            min-height: var(--boton-altura);
+            padding: var(--espaciado-md) var(--espaciado-lg);
+            font-size: var(--fuente-base);
+            font-weight: 600;
+            border: 3px solid var(--color-primario);
+            background-color: white;
+            color: var(--color-primario);
+            border-radius: var(--radio-borde);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+
+        .game-btn:hover {
+            background-color: var(--color-hover);
+            border-color: var(--color-hover);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .game-btn.active {
+            background-color: var(--color-primario);
+            color: white;
+        }
+
+        /* ============================================
+           BOTONES DE ACCIÓN
+           ============================================ */
+        .action-buttons {
+            display: flex;
+            gap: var(--espaciado-md);
+            margin-top: var(--espaciado-lg);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            min-height: var(--boton-altura);
+            padding: var(--espaciado-md) var(--espaciado-xl);
+            font-size: var(--fuente-base);
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radio-borde);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primario);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-hover);
+            transform: scale(1.05);
+        }
+
+        .btn-hint {
+            background-color: var(--color-pista);
+            color: var(--color-texto);
+        }
+
+        .btn-hint:hover {
+            background-color: #F59E0B;
+            transform: scale(1.05);
+        }
+
+        .btn-reset {
+            background-color: #6B7280;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background-color: #4B5563;
+            transform: scale(1.05);
+        }
+
+        /* ============================================
+           CONTENEDOR DE JUEGOS
+           ============================================ */
+        .game-container {
+            background-color: white;
+            padding: var(--espaciado-xl);
+            border-radius: var(--radio-borde);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .game-title {
+            font-size: 28px;
+            color: var(--color-primario);
+            margin-bottom: var(--espaciado-lg);
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* ============================================
+           CRUCIGRAMA ESTILO PERIÓDICO
+           ============================================ */
+        .crossword-layout {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: var(--espaciado-xl);
+            align-items: start;
+        }
+
+        .crossword-grid {
+            display: grid;
+            grid-template-columns: repeat(13, 48px);
+            grid-template-rows: repeat(13, 48px);
+            gap: 0;
+            background-color: #000000;
+            padding: 0;
+            border: 4px solid #000000;
+            margin: 0 auto;
+        }
+
+        .crossword-cell {
+            background-color: white;
+            border: 1px solid #000000;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .crossword-cell.blocked {
+            background-color: #000000;
+            cursor: not-allowed;
+            border: none;
+        }
+
+        .crossword-cell input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            text-align: center;
+            font-size: 26px;
+            font-weight: 700;
+            text-transform: uppercase;
+            background-color: transparent;
+            color: var(--color-texto);
+            padding-top: 8px;
+        }
+
+        .crossword-cell input:focus {
+            outline: none;
+            background-color: #FEF3C7;
+        }
+
+        .crossword-cell.selected {
+            background-color: #FEF3C7;
+        }
+
+        .crossword-cell.current-word {
+            background-color: #DBEAFE;
+        }
+
+        .cell-number {
+            position: absolute;
+            top: 1px;
+            left: 2px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #000000;
+            z-index: 10;
+        }
+
+        .clues-panel {
+            min-width: 350px;
+            max-width: 400px;
+            background-color: #F9FAFB;
+            padding: var(--espaciado-lg);
+            border-radius: var(--radio-borde);
+            border: 2px solid #E5E7EB;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .clues-section {
+            margin-bottom: var(--espaciado-lg);
+        }
+
+        .clues-section h3 {
+            font-size: 22px;
+            color: var(--color-primario);
+            margin-bottom: var(--espaciado-sm);
+        }
+
+        .clue-item {
+            padding: var(--espaciado-sm);
+            margin-bottom: var(--espaciado-xs);
+            background-color: white;
+            border-radius: 4px;
+            border-left: 4px solid var(--color-primario);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .clue-item:hover {
+            background-color: #DBEAFE;
+            transform: translateX(4px);
+        }
+
+        .clue-item.completed {
+            background-color: #D1FAE5;
+            border-left-color: var(--color-exito);
+            opacity: 0.7;
+        }
+
+        /* ============================================
+           LAS 10 DIFERENCIAS
+           ============================================ */
+        .differences-layout {
+            display: flex;
+            gap: var(--espaciado-xl);
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: var(--espaciado-lg);
+        }
+
+        .house-container {
+            width: 450px;
+            height: 550px;
+            position: relative;
+            border: 3px solid var(--color-primario);
+            border-radius: var(--radio-borde);
+            background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 50%, #90EE90 50%, #90EE90 100%);
+            cursor: crosshair;
+        }
+
+        /* Elementos de la casa */
+        .sky { position: absolute; top: 0; left: 0; right: 0; height: 60%; background: linear-gradient(to bottom, #87CEEB, #B0E0E6); }
+        .ground { position: absolute; bottom: 0; left: 0; right: 0; height: 40%; background: linear-gradient(to bottom, #90EE90, #7CB342); }
+
+        .sun {
+            position: absolute;
+            top: 25px;
+            right: 35px;
+            width: 55px;
+            height: 55px;
+            background: #FFD700;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+        }
+
+        .sun-small {
+            width: 45px !important;
+            height: 45px !important;
+            top: 30px !important;
+        }
+
+        .moon {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            width: 60px;
+            height: 60px;
+            background: #F0F0F0;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(240, 240, 240, 0.6);
+        }
+
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .cloud1 { top: 50px; left: 60px; width: 80px; height: 35px; }
+        .cloud2 { top: 80px; left: 250px; width: 70px; height: 30px; }
+        .cloud3 { top: 120px; left: 150px; width: 60px; height: 25px; }
+        .cloud4 { top: 45px; left: 320px; width: 65px; height: 28px; }
+
+        .house-body {
+            position: absolute;
+            bottom: 130px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 270px;
+            height: 190px;
+            background: #D2691E;
+            border: 3px solid #8B4513;
+        }
+
+        .roof {
+            position: absolute;
+            bottom: 320px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-bottom: 105px solid #8B0000;
+        }
+
+        .chimney {
+            position: absolute;
+            bottom: 375px;
+            left: 50%;
+            transform: translateX(-75px);
+            width: 32px;
+            height: 65px;
+            background: #654321;
+            border: 2px solid #4A3015;
+        }
+
+        .chimney-short {
+            height: 55px !important;
+            bottom: 365px !important;
+        }
+
+        .smoke {
+            position: absolute;
+            top: -15px;
+            left: 6px;
+            width: 20px;
+            height: 20px;
+            background: #D3D3D3;
+            border-radius: 50%;
+            opacity: 0.7;
+        }
+
+        .door {
+            position: absolute;
+            bottom: 130px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 65px;
+            height: 95px;
+            border-radius: 8px 8px 0 0;
+            border: 3px solid #4A3015;
+        }
+
+        .door-red { background: #DC2626; }
+        .door-blue { background: #2563EB; }
+
+        .door-handle {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            width: 8px;
+            height: 8px;
+            background: #FFD700;
+            border-radius: 50%;
+        }
+
+        .handle-left {
+            right: auto !important;
+            left: 8px !important;
+        }
+
+        .window {
+            position: absolute;
+            width: 52px;
+            height: 52px;
+            background: #87CEEB;
+            border: 3px solid #4A3015;
+        }
+
+        .window-left { bottom: 215px; left: 110px; }
+        .window-right { bottom: 215px; right: 110px; }
+
+        .curtain {
+            position: absolute;
+            top: 0;
+            width: 20px;
+            height: 100%;
+            background: #FFB6C1;
+        }
+
+        .curtain-left { left: 0; }
+        .curtain-right { right: 0; }
+
+        .window-open {
+            background: #FFE4B5 !important;
+        }
+
+        .tree {
+            position: absolute;
+            bottom: 75px;
+            left: 55px;
+        }
+
+        .tree-right {
+            left: auto !important;
+            right: 55px !important;
+        }
+
+        .trunk {
+            width: 22px;
+            height: 45px;
+            background: #8B4513;
+            margin: 0 auto;
+        }
+
+        .leaves {
+            width: 65px;
+            height: 65px;
+            background: #228B22;
+            border-radius: 50%;
+            position: relative;
+            top: -22px;
+            left: -21px;
+        }
+
+        .apple {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #FF0000;
+            border-radius: 50%;
+        }
+
+        .apple1 { top: 15px; left: 12px; }
+        .apple2 { top: 28px; right: 18px; }
+        .apple3 { top: 38px; left: 28px; }
+
+        .flower {
+            position: absolute;
+            bottom: 55px;
+            right: 85px;
+        }
+
+        .flower-left {
+            right: auto !important;
+            left: 320px !important;
+        }
+
+        .stem {
+            width: 4px;
+            height: 32px;
+            background: #228B22;
+            margin: 0 auto;
+        }
+
+        .petals {
+            width: 26px;
+            height: 26px;
+            background: #FF69B4;
+            border-radius: 50%;
+            position: relative;
+            top: -16px;
+            left: -11px;
+        }
+
+        .path {
+            position: absolute;
+            bottom: 130px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 65px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .stone {
+            width: 20px;
+            height: 8px;
+            border-radius: 3px;
+            margin: 0 auto;
+        }
+
+        .stone-gray { background: #9CA3AF; }
+        .stone-brown { background: #92400E; }
+
+        .mailbox {
+            position: absolute;
+            bottom: 75px;
+            right: 55px;
+            width: 32px;
+            height: 42px;
+            background: #3B82F6;
+            border: 2px solid #1E40AF;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .mailbox-left {
+            right: auto !important;
+            left: 320px !important;
+        }
+
+        .mailbox-flag {
+            position: absolute;
+            top: 6px;
+            right: -9px;
+            width: 13px;
+            height: 6px;
+            background: #EF4444;
+        }
+
+        .flag-down {
+            transform: rotate(-45deg);
+            right: -7px !important;
+        }
+
+        .difference-marker {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--color-exito);
+            border-radius: 50%;
+            background: rgba(34, 197, 94, 0.2);
+            pointer-events: none;
+            animation: pulse-marker 0.5s ease;
+        }
+
+        @keyframes pulse-marker {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .differences-counter {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin: var(--espaciado-lg) 0;
+        }
+
+        /* ============================================
+           BUSCAMINAS 10x10
+           ============================================ */
+        .minesweeper-info {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: var(--espaciado-lg);
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .info-item {
+            padding: var(--espaciado-md);
+            background-color: #F3F4F6;
+            border-radius: var(--radio-borde);
+            border: 2px solid var(--color-primario);
+        }
+
+        .minesweeper-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 50px);
+            grid-template-rows: repeat(10, 50px);
+            gap: 2px;
+            background-color: #D1D5DB;
+            padding: 2px;
+            border: 3px solid var(--color-primario);
+            margin: 0 auto;
+            width: fit-content;
+        }
+
+        .mine-cell {
+            background-color: #E5E7EB;
+            border: 3px outset #9CA3AF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            user-select: none;
+        }
+
+        .mine-cell:hover:not(.revealed) {
+            background-color: #D1D5DB;
+            transform: scale(1.05);
+        }
+
+        .mine-cell.revealed {
+            background-color: white;
+            border-style: inset;
+            cursor: default;
+        }
+
+        .mine-cell.flagged {
+            background-color: #FEF3C7;
+        }
+
+        .mine-cell.mine-revealed {
+            background-color: #FEE2E2;
+        }
+
+        .mine-cell[data-count="0"] { color: white; }
+        .mine-cell[data-count="1"] { color: #3B82F6; }
+        .mine-cell[data-count="2"] { color: #22C55E; }
+        .mine-cell[data-count="3"] { color: #F59E0B; }
+        .mine-cell[data-count="4"] { color: #EF4444; }
+        .mine-cell[data-count="5"] { color: #8B5CF6; }
+        .mine-cell[data-count="6"] { color: #EC4899; }
+        .mine-cell[data-count="7"] { color: #6366F1; }
+        .mine-cell[data-count="8"] { color: #1F2937; }
+
+        /* ============================================
+           FOOTER Y MENSAJES
+           ============================================ */
+        footer {
+            margin-top: var(--espaciado-xl);
+            text-align: center;
+        }
+
+        .message-display {
+            min-height: 80px;
+            padding: var(--espaciado-lg);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: var(--radio-borde);
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 1024px) {
+            .crossword-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .clues-panel {
+                min-width: 100%;
+                max-width: 100%;
+            }
+
+            .house-container {
+                width: 380px;
+                height: 460px;
+            }
+
+            .crossword-grid {
+                grid-template-columns: repeat(13, 40px);
+                grid-template-rows: repeat(13, 40px);
+            }
+
+            .crossword-cell input {
+                font-size: 20px;
+            }
+
+            .minesweeper-grid {
+                grid-template-columns: repeat(10, 42px);
+                grid-template-rows: repeat(10, 42px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🧠 Desafío Mental Avanzado 🧠</h1>
+        <div class="game-selector">
+            <button class="game-btn active" data-game="crossword">📝 Crucigrama</button>
+            <button class="game-btn" data-game="differences">🔍 10 Diferencias</button>
+            <button class="game-btn" data-game="minesweeper">💎 Buscaminas</button>
+        </div>
+        <div style="text-align: center; margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <div style="font-size: 22px; font-weight: 700; color: #2563EB; background: #DBEAFE; padding: 12px 24px; border-radius: 8px; border: 3px solid #2563EB;">
+                🗓️ <span id="dailyLevelDisplay">Nivel del día</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <label style="font-size: 18px; font-weight: 600; color: #6B7280;">Cambiar nivel:</label>
+                <select id="levelSelector" style="font-size: 18px; padding: 10px 20px; border: 2px solid #6B7280; border-radius: 8px; background: white; color: #6B7280; font-weight: 600; cursor: pointer;">
+                    <option value="1">Nivel 1 - Ciencias</option>
+                    <option value="2">Nivel 2 - Cultura</option>
+                    <option value="3">Nivel 3 - Geografía</option>
+                    <option value="4">Nivel 4 - Historia</option>
+                    <option value="5">Nivel 5 - Arte</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- CRUCIGRAMA 13x13 ESTILO PERIÓDICO -->
+        <section id="crossword" class="game-container">
+            <h2 class="game-title">Crucigrama Estilo Periódico 13×13</h2>
+            <div class="crossword-layout">
+                <div class="crossword-grid" id="crosswordGrid"></div>
+                <div class="clues-panel">
+                    <div class="clues-section">
+                        <h3>➡️ Horizontal</h3>
+                        <div id="horizontalClues"></div>
+                    </div>
+                    <div class="clues-section">
+                        <h3>⬇️ Vertical</h3>
+                        <div id="verticalClues"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-hint" onclick="giveCrosswordHint()">💡 Pista</button>
+                <button class="btn btn-primary" onclick="verifyCrossword()">✓ Verificar</button>
+                <button class="btn btn-reset" onclick="resetCrossword()">🔄 Reiniciar</button>
+            </div>
+        </section>
+
+        <!-- LAS 10 DIFERENCIAS -->
+        <section id="differences" class="game-container hidden">
+            <h2 class="game-title">Encuentra las 10 Diferencias - Desafío Experto</h2>
+            <p style="text-align: center; font-size: 18px; color: #DC2626; font-weight: 600; margin-bottom: 16px; background: #FEE2E2; padding: 12px; border-radius: 8px;">
+                ⚠️ NIVEL EXPERTO: Diferencias de 1-2 píxeles - Casi imperceptibles - Requiere máxima concentración
+            </p>
+            <p style="text-align: center; font-size: 16px; color: #6B7280; margin-bottom: 16px;">
+                💡 Pista: Observa cuidadosamente tamaños, posiciones y proporciones. Usa el botón "Pista" si necesitas ayuda.
+            </p>
+            <div class="differences-counter" id="differencesCounter">Diferencias encontradas: 0 / 10</div>
+            <div class="differences-layout">
+                <div class="house-container" id="house1"></div>
+                <div class="house-container" id="house2"></div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-hint" onclick="giveDifferenceHint()">💡 Pista</button>
+                <button class="btn btn-reset" onclick="resetDifferences()">🔄 Reiniciar</button>
+            </div>
+        </section>
+
+        <!-- BUSCAMINAS 10x10 -->
+        <section id="minesweeper" class="game-container hidden">
+            <h2 class="game-title">Buscaminas Avanzado 10×10</h2>
+            <div class="minesweeper-info">
+                <div class="info-item">
+                    <span>💣 Minas: 20</span>
+                </div>
+                <div class="info-item">
+                    <span id="remainingCells">Casillas restantes: 80</span>
+                </div>
+                <div class="info-item">
+                    <span id="progressPercent">Progreso: 0%</span>
+                </div>
+            </div>
+            <div class="minesweeper-grid" id="minesweeperGrid"></div>
+            <div class="action-buttons">
+                <button class="btn btn-hint" onclick="revealSafeZone()">💡 Revelar Zona Segura</button>
+                <button class="btn btn-reset" onclick="resetMinesweeper()">🔄 Reiniciar</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="message-display" id="messageDisplay">
+            ¡Bienvenido al desafío avanzado! Pon a prueba tu ingenio 🎯
+        </div>
+    </footer>
+
+    <script>
+        // ============================================
+        // CONFIGURACIÓN Y CONSTANTES
+        // ============================================
+        const MESSAGES = {
+            welcome: '¡Bienvenido al desafío avanzado! Pon a prueba tu ingenio 🎯',
+            crosswordCorrect: ['¡Excelente!', '¡Correcto!', '¡Brillante!', '¡Impresionante!', '¡Magnífico!'],
+            crosswordHint: ['Aquí tienes una pista útil', 'Un pequeño empujón', 'Esto te ayudará'],
+            crosswordComplete: '🎉 ¡Extraordinario! Has dominado el crucigrama avanzado',
+            differenceFound: ['¡Aguda observación!', '¡Perfecto!', '¡Excelente vista!', '¡Muy bien!', '¡Detectivesco!'],
+            differenceHint: ['Observa cuidadosamente aquí', 'Hay algo sutil en esta zona', 'Fíjate en los detalles'],
+            differenceComplete: '🎉 ¡Magistral! Has encontrado todas las diferencias sutiles',
+            minesweeperSafe: ['¡Lógica impecable!', '¡Excelente deducción!', '¡Perfecto razonamiento!', '¡Brillante!'],
+            minesweeperMine: ['⚠️ Mina detectada, pero puedes continuar', '¡Cuidado! Había una mina aquí'],
+            minesweeperComplete: '🎉 ¡Sobresaliente! Has conquistado el buscaminas avanzado'
+        };
+
+        // ============================================
+        // ESTADO GLOBAL
+        // ============================================
+        let currentGame = 'crossword';
+
+        // Calcular nivel del día automáticamente
+        function getDailyLevel() {
+            const today = new Date();
+            const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
+            return (dayOfYear % 5) + 1; // Cicla entre niveles 1-5
+        }
+
+        let currentLevel = getDailyLevel();
+
+        // ============================================
+        // UTILIDADES GENERALES
+        // ============================================
+        function showMessage(message) {
+            const messageDisplay = document.getElementById('messageDisplay');
+            messageDisplay.textContent = message;
+            messageDisplay.style.animation = 'none';
+            setTimeout(() => messageDisplay.style.animation = 'fadeIn 0.5s ease', 10);
+        }
+
+        function getRandomMessage(messageArray) {
+            return messageArray[Math.floor(Math.random() * messageArray.length)];
+        }
+
+        // ============================================
+        // NAVEGACIÓN ENTRE JUEGOS Y NIVELES
+        // ============================================
+        document.querySelectorAll('.game-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const game = this.dataset.game;
+
+                document.querySelectorAll('.game-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                document.querySelectorAll('.game-container').forEach(container => {
+                    container.classList.add('hidden');
+                });
+                document.getElementById(game).classList.remove('hidden');
+
+                currentGame = game;
+
+                const welcomeMessages = {
+                    crossword: '¡Desafío literario y cultural! 📝',
+                    differences: '¡Pon a prueba tu percepción visual! 🔍',
+                    minesweeper: '¡Lógica y estrategia avanzada! 💎'
+                };
+                showMessage(welcomeMessages[game]);
+            });
+        });
+
+        // Actualizar display del nivel diario
+        function updateDailyLevelDisplay() {
+            const levelNames = {
+                1: 'Nivel 1 - Ciencias',
+                2: 'Nivel 2 - Cultura',
+                3: 'Nivel 3 - Geografía',
+                4: 'Nivel 4 - Historia',
+                5: 'Nivel 5 - Arte'
+            };
+
+            const today = new Date().toLocaleDateString('es-ES', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            document.getElementById('dailyLevelDisplay').innerHTML =
+                `${levelNames[currentLevel]}<br><span style="font-size: 16px; font-weight: 500;">${today}</span>`;
+        }
+
+        // Selector de niveles
+        document.getElementById('levelSelector').addEventListener('change', function() {
+            currentLevel = parseInt(this.value);
+            crosswordData = crosswordLevels[currentLevel];
+
+            // Reiniciar juegos con el nuevo nivel
+            initCrossword();
+            initDifferences();
+            initMinesweeper();
+
+            updateDailyLevelDisplay();
+            showMessage(`¡Nivel ${currentLevel} cargado! Nuevo desafío disponible`);
+        });
+
+        // ============================================
+        // CRUCIGRAMA 13x13 ESTILO PERIÓDICO - MÚLTIPLES NIVELES
+        // ============================================
+        const crosswordLevels = {
+            1: { // Nivel 1 - Ciencias
+                grid: [
+                    ['M', 'A', 'T', 'E', 'M', 'A', 'T', 'I', 'C', 'A', ' ', ' ', ' '],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', 'Q', 'U', 'I', 'M', 'I', 'C', 'A', ' ', 'F', 'I', 'S', 'I'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'C'],
+                    [' ', ' ', 'B', 'I', 'O', 'L', 'O', 'G', 'I', 'A', ' ', ' ', 'A'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    ['A', 'S', 'T', 'R', 'O', 'N', 'O', 'M', 'I', 'A', ' ', ' ', 'G'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'E'],
+                    [' ', 'E', 'C', 'O', 'L', 'O', 'G', 'I', 'A', ' ', ' ', ' ', 'O'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'M'],
+                    [' ', 'G', 'E', 'N', 'E', 'T', 'I', 'C', 'A', ' ', ' ', ' ', 'E'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'T'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'R']
+                ],
+                words: [
+                    { word: 'MATEMATICA', row: 0, col: 0, dir: 'H', num: 1, clue: 'Ciencia de los números y las figuras' },
+                    { word: 'QUIMICA', row: 2, col: 1, dir: 'H', num: 2, clue: 'Estudia la composición de la materia' },
+                    { word: 'FISICA', row: 2, col: 9, dir: 'V', num: 3, clue: 'Estudia las propiedades de la materia y energía' },
+                    { word: 'BIOLOGIA', row: 4, col: 2, dir: 'H', num: 4, clue: 'Ciencia de los seres vivos' },
+                    { word: 'ASTRONOMIA', row: 6, col: 0, dir: 'H', num: 5, clue: 'Estudia los astros y el universo' },
+                    { word: 'ECOLOGIA', row: 8, col: 1, dir: 'H', num: 6, clue: 'Estudia relaciones entre organismos y ambiente' },
+                    { word: 'GENETICA', row: 10, col: 1, dir: 'H', num: 7, clue: 'Estudia la herencia biológica' },
+                    { word: 'GEOGRAFIA', row: 2, col: 12, dir: 'V', num: 8, clue: 'Ciencia que estudia la Tierra' },
+                    { word: 'GEOMETRIA', row: 2, col: 12, dir: 'V', num: 8, clue: 'Rama de matemática que estudia figuras' }
+                ]
+            },
+            2: { // Nivel 2 - Cultura
+                grid: [
+                    ['F', 'I', 'L', 'O', 'S', 'O', 'F', 'I', 'A', ' ', ' ', ' ', ' '],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', 'L', 'I', 'T', 'E', 'R', 'A', 'T', 'U', 'R', 'A', ' ', 'M'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'U'],
+                    [' ', 'C', 'U', 'L', 'T', 'U', 'R', 'A', ' ', ' ', ' ', ' ', 'S'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'I'],
+                    ['T', 'E', 'A', 'T', 'R', 'O', ' ', ' ', 'P', 'O', 'E', 'S', 'I'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'A'],
+                    [' ', 'E', 'N', 'S', 'A', 'Y', 'O', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'H'],
+                    [' ', 'N', 'O', 'V', 'E', 'L', 'A', ' ', ' ', ' ', ' ', ' ', 'I'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'S'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'T']
+                ],
+                words: [
+                    { word: 'FILOSOFIA', row: 0, col: 0, dir: 'H', num: 1, clue: 'Amor por la sabiduría y el conocimiento' },
+                    { word: 'LITERATURA', row: 2, col: 1, dir: 'H', num: 2, clue: 'Arte de la expresión verbal y escrita' },
+                    { word: 'CULTURA', row: 4, col: 1, dir: 'H', num: 3, clue: 'Conjunto de conocimientos de un pueblo' },
+                    { word: 'TEATRO', row: 6, col: 0, dir: 'H', num: 4, clue: 'Arte de representar obras dramáticas' },
+                    { word: 'POESIA', row: 6, col: 8, dir: 'H', num: 5, clue: 'Género lírico de expresión artística' },
+                    { word: 'ENSAYO', row: 8, col: 1, dir: 'H', num: 6, clue: 'Texto en prosa sobre un tema' },
+                    { word: 'NOVELA', row: 10, col: 1, dir: 'H', num: 7, clue: 'Obra narrativa extensa en prosa' },
+                    { word: 'MUSICA', row: 2, col: 12, dir: 'V', num: 8, clue: 'Arte de combinar sonidos armónicamente' },
+                    { word: 'HISTORIA', row: 2, col: 12, dir: 'V', num: 8, clue: 'Ciencia que estudia el pasado' }
+                ]
+            },
+            3: { // Nivel 3 - Geografía
+                grid: [
+                    ['C', 'O', 'N', 'T', 'I', 'N', 'E', 'N', 'T', 'E', ' ', ' ', ' '],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', 'A', 'M', 'E', 'R', 'I', 'C', 'A', ' ', 'E', 'U', 'R', 'O'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'C'],
+                    [' ', ' ', 'A', 'F', 'R', 'I', 'C', 'A', ' ', ' ', ' ', ' ', 'E'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'A'],
+                    ['O', 'C', 'E', 'A', 'N', 'I', 'A', ' ', ' ', ' ', ' ', ' ', 'N'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'O'],
+                    [' ', 'M', 'O', 'N', 'T', 'A', 'N', 'A', ' ', ' ', ' ', ' ', ' '],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'A'],
+                    [' ', 'P', 'A', 'I', 'S', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'S'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'I'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'A']
+                ],
+                words: [
+                    { word: 'CONTINENTE', row: 0, col: 0, dir: 'H', num: 1, clue: 'Gran extensión de tierra emergida' },
+                    { word: 'AMERICA', row: 2, col: 1, dir: 'H', num: 2, clue: 'Continente del hemisferio occidental' },
+                    { word: 'EUROPA', row: 2, col: 9, dir: 'V', num: 3, clue: 'Continente donde está España y Francia' },
+                    { word: 'AFRICA', row: 4, col: 2, dir: 'H', num: 4, clue: 'Continente cuna de la humanidad' },
+                    { word: 'OCEANIA', row: 6, col: 0, dir: 'H', num: 5, clue: 'Continente donde está Australia' },
+                    { word: 'MONTANA', row: 8, col: 1, dir: 'H', num: 6, clue: 'Elevación natural del terreno' },
+                    { word: 'PAIS', row: 10, col: 1, dir: 'H', num: 7, clue: 'Territorio con gobierno propio' },
+                    { word: 'OCEANO', row: 2, col: 12, dir: 'V', num: 8, clue: 'Gran masa de agua salada' },
+                    { word: 'ASIA', row: 2, col: 12, dir: 'V', num: 8, clue: 'Continente más grande del mundo' }
+                ]
+            },
+            4: { // Nivel 4 - Historia
+                grid: [
+                    ['R', 'E', 'N', 'A', 'C', 'I', 'M', 'I', 'E', 'N', 'T', 'O', ' '],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', 'I', 'M', 'P', 'E', 'R', 'I', 'O', ' ', 'H', 'I', 'S', 'T'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'O'],
+                    [' ', 'C', 'I', 'V', 'I', 'L', 'I', 'Z', 'A', 'C', 'I', 'O', 'N'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'I'],
+                    ['R', 'E', 'V', 'O', 'L', 'U', 'C', 'I', 'O', 'N', ' ', ' ', 'C'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'A'],
+                    [' ', 'G', 'U', 'E', 'R', 'R', 'A', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'C'],
+                    [' ', 'E', 'P', 'O', 'C', 'A', ' ', ' ', ' ', ' ', ' ', ' ', 'O'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'L'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'O']
+                ],
+                words: [
+                    { word: 'RENACIMIENTO', row: 0, col: 0, dir: 'H', num: 1, clue: 'Período cultural europeo siglos XV-XVI' },
+                    { word: 'IMPERIO', row: 2, col: 1, dir: 'H', num: 2, clue: 'Organización que domina varios territorios' },
+                    { word: 'HISTORIA', row: 2, col: 9, dir: 'V', num: 3, clue: 'Ciencia que estudia el pasado humano' },
+                    { word: 'CIVILIZACION', row: 4, col: 1, dir: 'H', num: 4, clue: 'Sociedad con desarrollo cultural avanzado' },
+                    { word: 'REVOLUCION', row: 6, col: 0, dir: 'H', num: 5, clue: 'Cambio radical en estructura social' },
+                    { word: 'GUERRA', row: 8, col: 1, dir: 'H', num: 6, clue: 'Conflicto armado entre naciones' },
+                    { word: 'EPOCA', row: 10, col: 1, dir: 'H', num: 7, clue: 'Período histórico determinado' },
+                    { word: 'CRONICA', row: 2, col: 12, dir: 'V', num: 8, clue: 'Relato de hechos históricos' },
+                    { word: 'COLONIA', row: 2, col: 12, dir: 'V', num: 8, clue: 'Territorio dominado por potencia extranjera' }
+                ]
+            },
+            5: { // Nivel 5 - Arte
+                grid: [
+                    ['A', 'R', 'Q', 'U', 'I', 'T', 'E', 'C', 'T', 'U', 'R', 'A', ' '],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', 'E', 'S', 'C', 'U', 'L', 'T', 'U', 'R', 'A', ' ', ' ', 'P'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'I'],
+                    [' ', ' ', 'A', 'R', 'T', 'E', ' ', ' ', ' ', ' ', ' ', ' ', 'N'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'T'],
+                    ['D', 'I', 'S', 'E', 'N', 'O', ' ', ' ', 'M', 'U', 'S', 'E', 'O'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', 'C', 'I', 'N', 'E', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'E'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'S'],
+                    [' ', 'D', 'A', 'N', 'Z', 'A', ' ', ' ', ' ', ' ', ' ', ' ', 'T'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'I'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'L']
+                ],
+                words: [
+                    { word: 'ARQUITECTURA', row: 0, col: 0, dir: 'H', num: 1, clue: 'Arte de diseñar y construir edificios' },
+                    { word: 'ESCULTURA', row: 2, col: 1, dir: 'H', num: 2, clue: 'Arte de modelar figuras tridimensionales' },
+                    { word: 'PINTURA', row: 2, col: 12, dir: 'V', num: 3, clue: 'Arte de representar con pigmentos' },
+                    { word: 'ARTE', row: 4, col: 2, dir: 'H', num: 4, clue: 'Expresión de creatividad y belleza' },
+                    { word: 'DISENO', row: 6, col: 0, dir: 'H', num: 5, clue: 'Planificación creativa de objetos' },
+                    { word: 'MUSEO', row: 6, col: 8, dir: 'H', num: 6, clue: 'Lugar donde se exhiben obras de arte' },
+                    { word: 'CINE', row: 8, col: 1, dir: 'H', num: 7, clue: 'Séptimo arte, arte audiovisual' },
+                    { word: 'DANZA', row: 10, col: 1, dir: 'H', num: 8, clue: 'Arte de expresión con movimiento corporal' },
+                    { word: 'ESTILO', row: 2, col: 12, dir: 'V', num: 9, clue: 'Manera característica de expresión artística' }
+                ]
+            }
+        };
+
+        let crosswordData = crosswordLevels[1];
+
+        let currentWord = null;
+        let crosswordState = {};
+
+        function initCrossword() {
+            const grid = document.getElementById('crosswordGrid');
+            const horizontalClues = document.getElementById('horizontalClues');
+            const verticalClues = document.getElementById('verticalClues');
+
+            grid.innerHTML = '';
+            horizontalClues.innerHTML = '';
+            verticalClues.innerHTML = '';
+            crosswordState = {};
+
+            // Crear grid 13x13 estilo periódico
+            for (let i = 0; i < 13; i++) {
+                for (let j = 0; j < 13; j++) {
+                    const cell = document.createElement('div');
+                    const letter = crosswordData.grid[i][j];
+
+                    if (letter === ' ') {
+                        cell.className = 'crossword-cell blocked';
+                    } else {
+                        cell.className = 'crossword-cell';
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.maxLength = 1;
+                        input.dataset.row = i;
+                        input.dataset.col = j;
+                        input.dataset.answer = letter;
+
+                        input.addEventListener('input', handleCrosswordInput);
+                        input.addEventListener('focus', handleCrosswordFocus);
+                        input.addEventListener('keydown', handleCrosswordKeydown);
+
+                        const wordStart = crosswordData.words.find(w => w.row === i && w.col === j);
+                        if (wordStart) {
+                            const numSpan = document.createElement('span');
+                            numSpan.className = 'cell-number';
+                            numSpan.textContent = wordStart.num;
+                            cell.appendChild(numSpan);
+                        }
+
+                        cell.appendChild(input);
+                        crosswordState[`${i}-${j}`] = '';
+                    }
+
+                    grid.appendChild(cell);
+                }
+            }
+
+            // Crear pistas
+            crosswordData.words.forEach(word => {
+                const clueDiv = document.createElement('div');
+                clueDiv.className = 'clue-item';
+                clueDiv.innerHTML = `<strong>${word.num}.</strong> ${word.clue} (${word.word.length})`;
+                clueDiv.addEventListener('click', () => selectWord(word));
+
+                if (word.dir === 'H') {
+                    horizontalClues.appendChild(clueDiv);
+                } else {
+                    verticalClues.appendChild(clueDiv);
+                }
+            });
+        }
+
+        function handleCrosswordInput(e) {
+            const input = e.target;
+            const value = input.value.toUpperCase();
+            const row = parseInt(input.dataset.row);
+            const col = parseInt(input.dataset.col);
+            const answer = input.dataset.answer;
+
+            input.value = value;
+            crosswordState[`${row}-${col}`] = value;
+
+            const cell = input.parentElement;
+            if (value === answer) {
+                cell.classList.add('correct');
+                cell.classList.remove('incorrect');
+                showMessage(getRandomMessage(MESSAGES.crosswordCorrect));
+                checkCrosswordComplete();
+            } else if (value !== '') {
+                cell.classList.add('incorrect');
+                cell.classList.remove('correct');
+            } else {
+                cell.classList.remove('correct', 'incorrect');
+            }
+
+            if (value && currentWord) {
+                moveToNextCell(row, col);
+            }
+        }
+
+        function handleCrosswordKeydown(e) {
+            const input = e.target;
+            const row = parseInt(input.dataset.row);
+            const col = parseInt(input.dataset.col);
+
+            let nextRow = row;
+            let nextCol = col;
+
+            // Navegación con flechas
+            if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                nextCol = col + 1;
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                nextCol = col - 1;
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                nextRow = row + 1;
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                nextRow = row - 1;
+            } else if (e.key === 'Backspace' && !input.value) {
+                e.preventDefault();
+                if (currentWord) {
+                    if (currentWord.dir === 'H') nextCol = col - 1;
+                    else nextRow = row - 1;
+                }
+            } else {
+                return;
+            }
+
+            // Buscar la siguiente casilla válida
+            while (nextRow >= 0 && nextRow < 13 && nextCol >= 0 && nextCol < 13) {
+                const nextInput = document.querySelector(`input[data-row="${nextRow}"][data-col="${nextCol}"]`);
+                if (nextInput) {
+                    nextInput.focus();
+                    return;
+                }
+
+                // Si no hay input válido, continuar en la dirección
+                if (e.key === 'ArrowRight') nextCol++;
+                else if (e.key === 'ArrowLeft') nextCol--;
+                else if (e.key === 'ArrowDown') nextRow++;
+                else if (e.key === 'ArrowUp') nextRow--;
+                else break;
+            }
+        }
+
+        function handleCrosswordFocus(e) {
+            const row = parseInt(e.target.dataset.row);
+            const col = parseInt(e.target.dataset.col);
+
+            const word = crosswordData.words.find(w => {
+                if (w.dir === 'H') {
+                    return w.row === row && col >= w.col && col < w.col + w.word.length;
+                } else {
+                    return w.col === col && row >= w.row && row < w.row + w.word.length;
+                }
+            });
+
+            if (word) selectWord(word);
+        }
+
+        function selectWord(word) {
+            currentWord = word;
+
+            // Remover resaltado previo
+            document.querySelectorAll('.crossword-cell').forEach(cell => {
+                cell.classList.remove('selected', 'current-word');
+            });
+
+            // Resaltar todas las clues
+            document.querySelectorAll('.clue-item').forEach(clue => {
+                clue.classList.remove('active');
+            });
+
+            // Resaltar palabra actual
+            for (let i = 0; i < word.word.length; i++) {
+                let row, col;
+                if (word.dir === 'H') {
+                    row = word.row;
+                    col = word.col + i;
+                } else {
+                    row = word.row + i;
+                    col = word.col;
+                }
+
+                const input = document.querySelector(`input[data-row="${row}"][data-col="${col}"]`);
+                if (input) {
+                    input.parentElement.classList.add('current-word');
+                }
+            }
+
+            // Enfocar primera casilla vacía o la primera de la palabra
+            for (let i = 0; i < word.word.length; i++) {
+                let row, col;
+                if (word.dir === 'H') {
+                    row = word.row;
+                    col = word.col + i;
+                } else {
+                    row = word.row + i;
+                    col = word.col;
+                }
+
+                const input = document.querySelector(`input[data-row="${row}"][data-col="${col}"]`);
+                if (input && !input.value) {
+                    input.focus();
+                    input.parentElement.classList.add('selected');
+                    return;
+                }
+            }
+
+            // Si todas están llenas, enfocar la primera
+            const firstInput = document.querySelector(`input[data-row="${word.row}"][data-col="${word.col}"]`);
+            if (firstInput) {
+                firstInput.focus();
+                firstInput.parentElement.classList.add('selected');
+            }
+        }
+
+        function moveToNextCell(row, col) {
+            if (!currentWord) return;
+
+            let nextRow = row, nextCol = col;
+
+            if (currentWord.dir === 'H') {
+                nextCol++;
+            } else {
+                nextRow++;
+            }
+
+            const nextInput = document.querySelector(`input[data-row="${nextRow}"][data-col="${nextCol}"]`);
+            if (nextInput) {
+                nextInput.focus();
+            }
+        }
+
+        function giveCrosswordHint() {
+            if (!currentWord) {
+                showMessage('Primero selecciona una palabra del crucigrama');
+                return;
+            }
+
+            for (let i = 0; i < currentWord.word.length; i++) {
+                let row, col;
+                if (currentWord.dir === 'H') {
+                    row = currentWord.row;
+                    col = currentWord.col + i;
+                } else {
+                    row = currentWord.row + i;
+                    col = currentWord.col;
+                }
+
+                const input = document.querySelector(`input[data-row="${row}"][data-col="${col}"]`);
+                if (input && input.value !== input.dataset.answer) {
+                    input.value = input.dataset.answer;
+                    input.parentElement.classList.add('correct');
+                    input.parentElement.classList.remove('incorrect');
+                    crosswordState[`${row}-${col}`] = input.dataset.answer;
+                    showMessage(getRandomMessage(MESSAGES.crosswordHint));
+                    checkCrosswordComplete();
+                    return;
+                }
+            }
+
+            showMessage('Esta palabra ya está completa');
+        }
+
+        function verifyCrossword() {
+            let correct = 0, total = 0;
+
+            document.querySelectorAll('.crossword-cell input').forEach(input => {
+                total++;
+                if (input.value.toUpperCase() === input.dataset.answer) {
+                    correct++;
+                }
+            });
+
+            const percentage = Math.round((correct / total) * 100);
+            showMessage(`Progreso: ${percentage}% - ${correct}/${total} letras correctas`);
+        }
+
+        function checkCrosswordComplete() {
+            const allCorrect = Array.from(document.querySelectorAll('.crossword-cell input')).every(input => {
+                return input.value.toUpperCase() === input.dataset.answer;
+            });
+
+            if (allCorrect) {
+                showMessage(MESSAGES.crosswordComplete);
+                document.querySelectorAll('.clue-item').forEach(clue => {
+                    clue.classList.add('completed');
+                });
+            }
+        }
+
+        function resetCrossword() {
+            document.querySelectorAll('.crossword-cell input').forEach(input => {
+                input.value = '';
+                input.parentElement.classList.remove('correct', 'incorrect', 'selected');
+            });
+
+            document.querySelectorAll('.clue-item').forEach(clue => {
+                clue.classList.remove('completed');
+            });
+
+            crosswordState = {};
+            currentWord = null;
+            showMessage('Crucigrama reiniciado');
+        }
+
+        // ============================================
+        // LAS 10 DIFERENCIAS (EXTREMADAMENTE SUTILES PARA ADULTOS)
+        // ============================================
+        // Diferencias que varían según el nivel - apenas perceptibles visualmente
+        const differencesConfig = {
+            1: [
+                { id: 'sun', house: 2, desc: 'Tamaño del sol (diferencia de 5px)', tolerance: 30 },
+                { id: 'cloud1', house: 2, desc: 'Posición horizontal de nube (5px)', tolerance: 25 },
+                { id: 'chimney', house: 2, desc: 'Altura de chimenea (5px diferencia)', tolerance: 30 },
+                { id: 'door-handle', house: 2, desc: 'Posición de manija (2px)', tolerance: 20 },
+                { id: 'tree', house: 2, desc: 'Posición vertical árbol (3px)', tolerance: 35 },
+                { id: 'leaves', house: 2, desc: 'Diámetro del follaje (3px)', tolerance: 40 },
+                { id: 'petals', house: 2, desc: 'Tamaño de pétalos (2px)', tolerance: 25 },
+                { id: 'house-body', house: 2, desc: 'Ancho de la casa (5px)', tolerance: 50 },
+                { id: 'window-left', house: 2, desc: 'Ancho ventana (2px)', tolerance: 30 },
+                { id: 'roof', house: 2, desc: 'Ángulo del techo (5px borde)', tolerance: 50 }
+            ],
+            2: [
+                { id: 'sun', house: 2, desc: 'Diámetro solar (3px)', tolerance: 30 },
+                { id: 'cloud2', house: 2, desc: 'Ancho de nube (5px)', tolerance: 40 },
+                { id: 'chimney', house: 2, desc: 'Grosor chimenea (2px)', tolerance: 30 },
+                { id: 'house-body', house: 2, desc: 'Ancho pared (5px)', tolerance: 50 },
+                { id: 'window-right', house: 2, desc: 'Altura ventana (2px)', tolerance: 30 },
+                { id: 'leaves', house: 2, desc: 'Copa del árbol (3px)', tolerance: 40 },
+                { id: 'mailbox', house: 2, desc: 'Alto del buzón (2px)', tolerance: 30 },
+                { id: 'path', house: 2, desc: 'Ancho del camino (3px)', tolerance: 35 },
+                { id: 'door', house: 2, desc: 'Ancho puerta (2px)', tolerance: 35 },
+                { id: 'stem', house: 2, desc: 'Altura tallo flor (2px)', tolerance: 25 }
+            ],
+            3: [
+                { id: 'sun', house: 2, desc: 'Tamaño del sol (2px)', tolerance: 30 },
+                { id: 'cloud3', house: 2, desc: 'Posición vertical nube (5px)', tolerance: 35 },
+                { id: 'roof', house: 2, desc: 'Ancho del techo (5px)', tolerance: 50 },
+                { id: 'window-left', house: 2, desc: 'Posición vertical (2px)', tolerance: 30 },
+                { id: 'trunk', house: 2, desc: 'Grosor tronco (2px)', tolerance: 25 },
+                { id: 'chimney', house: 2, desc: 'Posición vertical (3px)', tolerance: 35 },
+                { id: 'house-body', house: 2, desc: 'Posición vertical (2px)', tolerance: 50 },
+                { id: 'door', house: 2, desc: 'Borde de puerta (1px)', tolerance: 35 },
+                { id: 'apple', house: 2, desc: 'Tamaño manzanas (1px)', tolerance: 20 },
+                { id: 'mailbox-flag', house: 2, desc: 'Ancho bandera (1px)', tolerance: 20 }
+            ],
+            4: [
+                { id: 'sun', house: 2, desc: 'Diámetro (1px diferencia)', tolerance: 30 },
+                { id: 'cloud1', house: 2, desc: 'Altura de nube (3px)', tolerance: 35 },
+                { id: 'house-body', house: 2, desc: 'Altura de pared (5px)', tolerance: 50 },
+                { id: 'window-right', house: 2, desc: 'Posición vertical (2px)', tolerance: 30 },
+                { id: 'leaves', house: 2, desc: 'Posición horizontal (1px)', tolerance: 40 },
+                { id: 'chimney', house: 2, desc: 'Desplazamiento horizontal (3px)', tolerance: 35 },
+                { id: 'door', house: 2, desc: 'Radio de esquinas (2px)', tolerance: 35 },
+                { id: 'stone', house: 2, desc: 'Altura piedras (1px)', tolerance: 30 },
+                { id: 'petals', house: 2, desc: 'Posición horizontal (1px)', tolerance: 25 },
+                { id: 'mailbox', house: 2, desc: 'Ancho del buzón (2px)', tolerance: 30 }
+            ],
+            5: [
+                { id: 'sun', house: 2, desc: 'Radio solar (2px)', tolerance: 30 },
+                { id: 'cloud2', house: 2, desc: 'Posición horizontal (5px)', tolerance: 40 },
+                { id: 'roof', house: 2, desc: 'Altura del pico (2px)', tolerance: 50 },
+                { id: 'window-left', house: 2, desc: 'Posición horizontal (2px)', tolerance: 30 },
+                { id: 'trunk', house: 2, desc: 'Altura del tronco (2px)', tolerance: 30 },
+                { id: 'house-body', house: 2, desc: 'Grosor del borde (1px)', tolerance: 50 },
+                { id: 'door-handle', house: 2, desc: 'Tamaño de manija (1px)', tolerance: 20 },
+                { id: 'apple', house: 2, desc: 'Posición primera manzana (1px)', tolerance: 20 },
+                { id: 'smoke', house: 2, desc: 'Posición horizontal humo (1px)', tolerance: 25 },
+                { id: 'stem', house: 2, desc: 'Grosor del tallo (1px)', tolerance: 20 }
+            ]
+        };
+
+        let differences = differencesConfig[1];
+
+        let foundDifferences = new Set();
+        let differenceElements = [];
+
+        function initDifferences() {
+            const house1 = document.getElementById('house1');
+            const house2 = document.getElementById('house2');
+
+            house1.innerHTML = '';
+            house2.innerHTML = '';
+            foundDifferences = new Set();
+            differenceElements = [];
+
+            // Actualizar diferencias según el nivel actual
+            differences = differencesConfig[currentLevel] || differencesConfig[1];
+
+            createHouse(house1, 1);
+            createHouse(house2, 2);
+
+            updateDifferencesCounter();
+
+            house1.addEventListener('click', (e) => handleDifferenceClick(e, 1));
+            house2.addEventListener('click', (e) => handleDifferenceClick(e, 2));
+        }
+
+        function createHouse(container, houseNum) {
+            // Variaciones EXTREMADAMENTE SUTILES - diferencias de 1-2px máximo
+            // Estas diferencias son casi imperceptibles y requieren mucha atención
+            const levelVariations = {
+                1: {
+                    sunSize: houseNum === 2 ? '54px' : '55px',        // 1px diferencia
+                    cloud1Left: houseNum === 2 ? '61px' : '60px',     // 1px diferencia
+                    chimneyHeight: houseNum === 2 ? '64px' : '65px',  // 1px diferencia
+                    handleRight: houseNum === 2 ? '9px' : '8px',      // 1px diferencia
+                    windowLeftWidth: houseNum === 2 ? '51px' : '52px',// 1px diferencia
+                    treeBottom: houseNum === 2 ? '74px' : '75px',     // 1px diferencia
+                    roofBorder: houseNum === 2 ? '104px' : '105px',   // 1px diferencia
+                    smokeSize: houseNum === 2 ? '19px' : '20px',      // 1px diferencia
+                    doorHeight: houseNum === 2 ? '94px' : '95px',     // 1px diferencia
+                    petalSize: houseNum === 2 ? '25px' : '26px'       // 1px diferencia
+                },
+                2: {
+                    sunSize: houseNum === 2 ? '54px' : '55px',        // 1px diferencia
+                    cloud2Width: houseNum === 2 ? '69px' : '70px',    // 1px diferencia
+                    chimneyWidth: houseNum === 2 ? '31px' : '32px',   // 1px diferencia
+                    houseWidth: houseNum === 2 ? '269px' : '270px',   // 1px diferencia
+                    windowRightHeight: houseNum === 2 ? '51px' : '52px', // 1px diferencia
+                    leavesSize: houseNum === 2 ? '64px' : '65px',     // 1px diferencia
+                    mailboxHeight: houseNum === 2 ? '41px' : '42px',  // 1px diferencia
+                    pathWidth: houseNum === 2 ? '64px' : '65px',      // 1px diferencia
+                    doorWidth: houseNum === 2 ? '64px' : '65px',      // 1px diferencia
+                    stemHeight: houseNum === 2 ? '31px' : '32px'      // 1px diferencia
+                },
+                3: {
+                    sunSize: houseNum === 2 ? '54px' : '55px',        // 1px diferencia
+                    cloud3Top: houseNum === 2 ? '121px' : '120px',    // 1px diferencia
+                    roofLeft: houseNum === 2 ? '149px' : '150px',     // 1px diferencia
+                    windowLeftBottom: houseNum === 2 ? '216px' : '215px', // 1px diferencia
+                    trunkWidth: houseNum === 2 ? '21px' : '22px',     // 1px diferencia
+                    chimneyBottom: houseNum === 2 ? '376px' : '375px',// 1px diferencia
+                    houseBottom: houseNum === 2 ? '129px' : '130px',  // 1px diferencia
+                    doorBorder: houseNum === 2 ? '2.5px' : '3px',     // 0.5px diferencia
+                    appleSize: houseNum === 2 ? '10.5px' : '10px',    // 0.5px diferencia
+                    flagWidth: houseNum === 2 ? '13.5px' : '13px'     // 0.5px diferencia
+                },
+                4: {
+                    sunSize: houseNum === 2 ? '54.5px' : '55px',      // 0.5px diferencia
+                    cloud1Height: houseNum === 2 ? '34px' : '35px',   // 1px diferencia
+                    houseHeight: houseNum === 2 ? '189px' : '190px',  // 1px diferencia
+                    windowRightBottom: houseNum === 2 ? '216px' : '215px', // 1px diferencia
+                    leavesLeft: houseNum === 2 ? '-20.5px' : '-21px', // 0.5px diferencia
+                    chimneyTransform: houseNum === 2 ? '-74px' : '-75px', // 1px diferencia
+                    doorRadius: houseNum === 2 ? '7px' : '8px',       // 1px diferencia
+                    stoneHeight: houseNum === 2 ? '8.5px' : '8px',    // 0.5px diferencia
+                    petalLeft: houseNum === 2 ? '-10.5px' : '-11px',  // 0.5px diferencia
+                    mailboxWidth: houseNum === 2 ? '31px' : '32px'    // 1px diferencia
+                },
+                5: {
+                    sunSize: houseNum === 2 ? '54px' : '55px',        // 1px diferencia
+                    cloud2Left: houseNum === 2 ? '251px' : '250px',   // 1px diferencia
+                    roofBorder: houseNum === 2 ? '104px' : '105px',   // 1px diferencia
+                    windowLeftLeft: houseNum === 2 ? '111px' : '110px', // 1px diferencia
+                    trunkHeight: houseNum === 2 ? '44px' : '45px',    // 1px diferencia
+                    houseBodyBorder: houseNum === 2 ? '2.5px' : '3px',// 0.5px diferencia
+                    handleSize: houseNum === 2 ? '8.5px' : '8px',     // 0.5px diferencia
+                    appleTop1: houseNum === 2 ? '15.5px' : '15px',    // 0.5px diferencia
+                    smokeLeft: houseNum === 2 ? '6.5px' : '6px',      // 0.5px diferencia
+                    stemWidth: houseNum === 2 ? '4.5px' : '4px'       // 0.5px diferencia
+                }
+            };
+
+            const vars = levelVariations[currentLevel] || levelVariations[1];
+
+            container.innerHTML = `
+                <div class="sky"></div>
+                <div class="ground"></div>
+
+                <div class="sun" style="width: ${vars.sunSize || '55px'}; height: ${vars.sunSize || '55px'};"></div>
+
+                <div class="cloud cloud1" style="left: ${vars.cloud1Left || '60px'}; height: ${vars.cloud1Height || '35px'};"></div>
+                <div class="cloud cloud2" style="left: ${vars.cloud2Left || '250px'}; width: ${vars.cloud2Width || '70px'};"></div>
+                <div class="cloud cloud3" style="top: ${vars.cloud3Top || '120px'};"></div>
+
+                <div class="roof" style="border-bottom: ${vars.roofBorder || '105px'} solid #8B0000; border-left: ${vars.roofLeft || '150px'} solid transparent; border-right: ${vars.roofLeft || '150px'} solid transparent;"></div>
+
+                <div class="chimney" style="width: ${vars.chimneyWidth || '32px'}; height: ${vars.chimneyHeight || '65px'}; bottom: ${vars.chimneyBottom || '375px'}; transform: translateX(${vars.chimneyTransform || '-75px'});">
+                    <div class="smoke" style="width: ${vars.smokeSize || '20px'}; height: ${vars.smokeSize || '20px'}; left: ${vars.smokeLeft || '6px'};"></div>
+                </div>
+
+                <div class="house-body" style="width: ${vars.houseWidth || '270px'}; height: ${vars.houseHeight || '190px'}; bottom: ${vars.houseBottom || '130px'}; border: ${vars.houseBodyBorder || '3px'} solid #8B4513;"></div>
+
+                <div class="door door-red" style="width: ${vars.doorWidth || '65px'}; height: ${vars.doorHeight || '95px'}; border-radius: ${vars.doorRadius || '8px'} ${vars.doorRadius || '8px'} 0 0; border: ${vars.doorBorder || '3px'} solid #4A3015;">
+                    <div class="door-handle" style="right: ${vars.handleRight || '8px'}; width: ${vars.handleSize || '8px'}; height: ${vars.handleSize || '8px'};"></div>
+                </div>
+
+                <div class="window window-left" style="width: ${vars.windowLeftWidth || '52px'}; bottom: ${vars.windowLeftBottom || '215px'}; left: ${vars.windowLeftLeft || '110px'};">
+                    <div class="curtain curtain-left"></div>
+                    <div class="curtain curtain-right"></div>
+                </div>
+
+                <div class="window window-right" style="height: ${vars.windowRightHeight || '52px'}; bottom: ${vars.windowRightBottom || '215px'};"></div>
+
+                <div class="tree" style="bottom: ${vars.treeBottom || '75px'};">
+                    <div class="leaves" style="width: ${vars.leavesSize || '65px'}; height: ${vars.leavesSize || '65px'}; left: ${vars.leavesLeft || '-21px'};">
+                        <div class="apple apple1" style="width: ${vars.appleSize || '10px'}; height: ${vars.appleSize || '10px'}; top: ${vars.appleTop1 || '15px'};"></div>
+                        <div class="apple apple2" style="width: ${vars.appleSize || '10px'}; height: ${vars.appleSize || '10px'};"></div>
+                        <div class="apple apple3" style="width: ${vars.appleSize || '10px'}; height: ${vars.appleSize || '10px'};"></div>
+                    </div>
+                    <div class="trunk" style="width: ${vars.trunkWidth || '22px'}; height: ${vars.trunkHeight || '45px'};"></div>
+                </div>
+
+                <div class="flower">
+                    <div class="petals" style="width: ${vars.petalSize || '26px'}; height: ${vars.petalSize || '26px'}; left: ${vars.petalLeft || '-11px'};"></div>
+                    <div class="stem" style="width: ${vars.stemWidth || '4px'}; height: ${vars.stemHeight || '32px'};"></div>
+                </div>
+
+                <div class="path" style="width: ${vars.pathWidth || '65px'};">
+                    <div class="stone stone-gray" style="height: ${vars.stoneHeight || '8px'};"></div>
+                    <div class="stone stone-gray" style="height: ${vars.stoneHeight || '8px'};"></div>
+                    <div class="stone stone-gray" style="height: ${vars.stoneHeight || '8px'};"></div>
+                </div>
+
+                <div class="mailbox" style="width: ${vars.mailboxWidth || '32px'}; height: ${vars.mailboxHeight || '42px'};">
+                    <div class="mailbox-flag" style="width: ${vars.flagWidth || '13px'};"></div>
+                </div>
+            `;
+
+            if (houseNum === 2) {
+                differenceElements.push(
+                    { id: 'sun', element: container.querySelector('.sun'), house: 2 },
+                    { id: 'cloud1', element: container.querySelector('.cloud1'), house: 2 },
+                    { id: 'chimney', element: container.querySelector('.chimney'), house: 2 },
+                    { id: 'door-handle', element: container.querySelector('.door-handle'), house: 2 },
+                    { id: 'tree', element: container.querySelector('.tree'), house: 2 },
+                    { id: 'leaves', element: container.querySelector('.leaves'), house: 2 },
+                    { id: 'petals', element: container.querySelector('.petals'), house: 2 },
+                    { id: 'house-body', element: container.querySelector('.house-body'), house: 2 },
+                    { id: 'window-left', element: container.querySelector('.window-left'), house: 2 },
+                    { id: 'roof', element: container.querySelector('.roof'), house: 2 }
+                );
+            }
+        }
+
+        function handleDifferenceClick(e, houseNum) {
+            const clickX = e.offsetX;
+            const clickY = e.offsetY;
+            const container = houseNum === 1 ? document.getElementById('house1') : document.getElementById('house2');
+            const containerRect = container.getBoundingClientRect();
+
+            // Convertir coordenadas relativas al contenedor
+            const absoluteX = e.clientX - containerRect.left;
+            const absoluteY = e.clientY - containerRect.top;
+
+            for (const diff of differenceElements) {
+                if (diff.house === houseNum && !foundDifferences.has(diff.id)) {
+                    const element = diff.element;
+                    const rect = element.getBoundingClientRect();
+                    const elemX = rect.left - containerRect.left + rect.width / 2;
+                    const elemY = rect.top - containerRect.top + rect.height / 2;
+
+                    // Calcular distancia del click al centro del elemento
+                    const distance = Math.sqrt(
+                        Math.pow(absoluteX - elemX, 2) +
+                        Math.pow(absoluteY - elemY, 2)
+                    );
+
+                    // Usar tolerancia específica de la diferencia
+                    const diffConfig = differences.find(d => d.id === diff.id);
+                    const tolerance = diffConfig ? diffConfig.tolerance : 40;
+
+                    if (distance <= tolerance) {
+                        foundDifferences.add(diff.id);
+                        markDifference(element, houseNum, diff.id);
+                        updateDifferencesCounter();
+                        showMessage(getRandomMessage(MESSAGES.differenceFound));
+
+                        if (foundDifferences.size === 10) {
+                            setTimeout(() => {
+                                showMessage(MESSAGES.differenceComplete);
+                            }, 1000);
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+
+        function markDifference(element, houseNum, diffId) {
+            const container = document.getElementById(`house${houseNum}`);
+            const rect = element.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+
+            const marker = document.createElement('div');
+            marker.className = 'difference-marker';
+            marker.style.left = (rect.left - containerRect.left + rect.width / 2 - 25) + 'px';
+            marker.style.top = (rect.top - containerRect.top + rect.height / 2 - 25) + 'px';
+
+            container.appendChild(marker);
+
+            const otherHouse = houseNum === 1 ? 2 : 1;
+            const otherContainer = document.getElementById(`house${otherHouse}`);
+            const otherDiff = differenceElements.find(d => d.id === diffId && d.house === otherHouse);
+
+            if (otherDiff && otherDiff.element) {
+                const otherRect = otherDiff.element.getBoundingClientRect();
+                const otherContainerRect = otherContainer.getBoundingClientRect();
+
+                const otherMarker = document.createElement('div');
+                otherMarker.className = 'difference-marker';
+                otherMarker.style.left = (otherRect.left - otherContainerRect.left + otherRect.width / 2 - 25) + 'px';
+                otherMarker.style.top = (otherRect.top - otherContainerRect.top + otherRect.height / 2 - 25) + 'px';
+
+                otherContainer.appendChild(otherMarker);
+            }
+        }
+
+        function updateDifferencesCounter() {
+            const counter = document.getElementById('differencesCounter');
+            counter.textContent = `Diferencias encontradas: ${foundDifferences.size} / 10`;
+        }
+
+        function giveDifferenceHint() {
+            const notFound = differences.filter(d => !foundDifferences.has(d.id));
+
+            if (notFound.length === 0) {
+                showMessage('¡Has encontrado todas las diferencias!');
+                return;
+            }
+
+            const hint = notFound[Math.floor(Math.random() * notFound.length)];
+            const hintElement = differenceElements.find(d => d.id === hint.id);
+
+            if (hintElement && hintElement.element) {
+                hintElement.element.classList.add('hint-highlight');
+                setTimeout(() => {
+                    hintElement.element.classList.remove('hint-highlight');
+                }, 3000);
+            }
+
+            showMessage(getRandomMessage(MESSAGES.differenceHint));
+        }
+
+        function resetDifferences() {
+            foundDifferences = new Set();
+            initDifferences();
+            showMessage('Juego reiniciado');
+        }
+
+        // ============================================
+        // BUSCAMINAS 10x10 AVANZADO
+        // ============================================
+        const GRID_SIZE = 10;
+        const MINE_COUNT = 20;
+        let mineField = [];
+        let revealedCells = new Set();
+        let flaggedCells = new Set();
+
+        function initMinesweeper() {
+            const grid = document.getElementById('minesweeperGrid');
+            grid.innerHTML = '';
+            mineField = [];
+            revealedCells = new Set();
+            flaggedCells = new Set();
+
+            for (let i = 0; i < GRID_SIZE; i++) {
+                mineField[i] = [];
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    mineField[i][j] = { mine: false, count: 0, revealed: false, flagged: false };
+                }
+            }
+
+            let minesPlaced = 0;
+            while (minesPlaced < MINE_COUNT) {
+                const row = Math.floor(Math.random() * GRID_SIZE);
+                const col = Math.floor(Math.random() * GRID_SIZE);
+
+                if (!mineField[row][col].mine) {
+                    mineField[row][col].mine = true;
+                    minesPlaced++;
+                }
+            }
+
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    if (!mineField[i][j].mine) {
+                        mineField[i][j].count = countAdjacentMines(i, j);
+                    }
+                }
+            }
+
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'mine-cell';
+                    cell.dataset.row = i;
+                    cell.dataset.col = j;
+
+                    cell.addEventListener('click', () => handleMineClick(i, j));
+                    cell.addEventListener('contextmenu', (e) => {
+                        e.preventDefault();
+                        toggleFlag(i, j);
+                    });
+
+                    grid.appendChild(cell);
+                }
+            }
+
+            updateMinesweeperInfo();
+        }
+
+        function countAdjacentMines(row, col) {
+            let count = 0;
+            for (let i = -1; i <= 1; i++) {
+                for (let j = -1; j <= 1; j++) {
+                    if (i === 0 && j === 0) continue;
+                    const newRow = row + i;
+                    const newCol = col + j;
+                    if (newRow >= 0 && newRow < GRID_SIZE && newCol >= 0 && newCol < GRID_SIZE) {
+                        if (mineField[newRow][newCol].mine) count++;
+                    }
+                }
+            }
+            return count;
+        }
+
+        function handleMineClick(row, col) {
+            if (mineField[row][col].revealed || mineField[row][col].flagged) return;
+
+            if (mineField[row][col].mine) {
+                revealMine(row, col);
+                showMessage(getRandomMessage(MESSAGES.minesweeperMine));
+            } else {
+                revealCell(row, col);
+                showMessage(getRandomMessage(MESSAGES.minesweeperSafe));
+                checkMinesweeperComplete();
+            }
+
+            updateMinesweeperInfo();
+        }
+
+        function revealCell(row, col) {
+            if (row < 0 || row >= GRID_SIZE || col < 0 || col >= GRID_SIZE) return;
+            if (mineField[row][col].revealed || mineField[row][col].mine) return;
+
+            mineField[row][col].revealed = true;
+            revealedCells.add(`${row}-${col}`);
+
+            const cellElement = document.querySelector(`.mine-cell[data-row="${row}"][data-col="${col}"]`);
+            cellElement.classList.add('revealed');
+
+            const count = mineField[row][col].count;
+            if (count > 0) {
+                cellElement.textContent = count;
+                cellElement.dataset.count = count;
+            } else {
+                for (let i = -1; i <= 1; i++) {
+                    for (let j = -1; j <= 1; j++) {
+                        if (i === 0 && j === 0) continue;
+                        revealCell(row + i, col + j);
+                    }
+                }
+            }
+        }
+
+        function revealMine(row, col) {
+            mineField[row][col].revealed = true;
+            const cellElement = document.querySelector(`.mine-cell[data-row="${row}"][data-col="${col}"]`);
+            cellElement.classList.add('revealed', 'mine-revealed');
+            cellElement.textContent = '⚠️';
+        }
+
+        function toggleFlag(row, col) {
+            if (mineField[row][col].revealed) return;
+
+            mineField[row][col].flagged = !mineField[row][col].flagged;
+            const cellElement = document.querySelector(`.mine-cell[data-row="${row}"][data-col="${col}"]`);
+
+            if (mineField[row][col].flagged) {
+                cellElement.classList.add('flagged');
+                cellElement.textContent = '🚩';
+                flaggedCells.add(`${row}-${col}`);
+            } else {
+                cellElement.classList.remove('flagged');
+                cellElement.textContent = '';
+                flaggedCells.delete(`${row}-${col}`);
+            }
+        }
+
+        function revealSafeZone() {
+            for (let attempts = 0; attempts < 200; attempts++) {
+                const centerRow = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+                const centerCol = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+                let hasMines = false;
+                let allRevealed = true;
+
+                for (let i = -1; i <= 1; i++) {
+                    for (let j = -1; j <= 1; j++) {
+                        const row = centerRow + i;
+                        const col = centerCol + j;
+                        if (mineField[row][col].mine) hasMines = true;
+                        if (!mineField[row][col].revealed) allRevealed = false;
+                    }
+                }
+
+                if (!hasMines && !allRevealed) {
+                    for (let i = -1; i <= 1; i++) {
+                        for (let j = -1; j <= 1; j++) {
+                            revealCell(centerRow + i, centerCol + j);
+                        }
+                    }
+                    showMessage('¡Zona segura revelada!');
+                    updateMinesweeperInfo();
+                    checkMinesweeperComplete();
+                    return;
+                }
+            }
+
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    if (!mineField[i][j].mine && !mineField[i][j].revealed) {
+                        revealCell(i, j);
+                        showMessage('¡Casilla segura revelada!');
+                        updateMinesweeperInfo();
+                        checkMinesweeperComplete();
+                        return;
+                    }
+                }
+            }
+
+            showMessage('¡Ya revelaste todas las casillas seguras!');
+        }
+
+        function updateMinesweeperInfo() {
+            const totalCells = GRID_SIZE * GRID_SIZE;
+            const safeCells = totalCells - MINE_COUNT;
+            const remaining = safeCells - revealedCells.size;
+            const progress = Math.round((revealedCells.size / safeCells) * 100);
+
+            document.getElementById('remainingCells').textContent = `Casillas restantes: ${remaining}`;
+            document.getElementById('progressPercent').textContent = `Progreso: ${progress}%`;
+        }
+
+        function checkMinesweeperComplete() {
+            const totalCells = GRID_SIZE * GRID_SIZE;
+            const safeCells = totalCells - MINE_COUNT;
+
+            if (revealedCells.size === safeCells) {
+                setTimeout(() => {
+                    showMessage(MESSAGES.minesweeperComplete);
+                }, 500);
+            }
+        }
+
+        function resetMinesweeper() {
+            initMinesweeper();
+            showMessage('Buscaminas reiniciado');
+        }
+
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Configurar selector de nivel con el nivel diario
+            document.getElementById('levelSelector').value = currentLevel;
+            updateDailyLevelDisplay();
+
+            initCrossword();
+            initDifferences();
+            initMinesweeper();
+
+            const levelNames = {
+                1: 'Ciencias',
+                2: 'Cultura',
+                3: 'Geografía',
+                4: 'Historia',
+                5: 'Arte'
+            };
+
+            showMessage(`¡Bienvenido! Hoy te toca: ${levelNames[currentLevel]} 🎯`);
+        });
+    </script>
+</body>
+</html>

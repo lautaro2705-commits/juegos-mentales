@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="0;url=index.html?v=2.0.0&t=20260210223900&bust=1">
+    <title>Redirigiendo a versión actualizada...</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 20px;
+            margin: 15px 0;
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 15px 30px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 18px;
+            transition: transform 0.2s;
+        }
+        a:hover {
+            transform: scale(1.05);
+        }
+        .version {
+            margin-top: 30px;
+            font-size: 16px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Cargando Versión Actualizada</h1>
+        <div class="spinner"></div>
+        <p>Redirigiendo a la nueva versión...</p>
+        <p><strong>Versión 2.0:</strong> Crucigrama 13×13 + Diferencias Expertas</p>
+        <a href="index.html?v=2.0.0&t=20260210223900&bust=1">
+            👉 Click aquí si no se redirige automáticamente
+        </a>
+        <p class="version">
+            ✅ Crucigrama estilo periódico 13×13<br>
+            ✅ Diferencias extremadamente sutiles (1-2px)<br>
+            ✅ Navegación con teclado<br>
+            ✅ Sin caché
+        </p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpiador de Caché - Juegos Mentales</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        .container {
+            text-align: center;
+            padding: 50px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        .status {
+            font-size: 20px;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+        .spinner {
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top: 5px solid white;
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .success {
+            display: none;
+            font-size: 60px;
+            margin: 20px 0;
+        }
+        .info {
+            margin-top: 30px;
+            font-size: 16px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        .countdown {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 Limpiando Caché</h1>
+        <div class="spinner" id="spinner"></div>
+        <div class="success" id="success">✅</div>
+        <div class="status" id="status">Iniciando limpieza...</div>
+        <div class="countdown" id="countdown"></div>
+        <div class="info" id="info">
+            Este proceso eliminará:<br>
+            • Service Workers<br>
+            • Cache Storage<br>
+            • Y redirigirá a la versión más reciente
+        </div>
+    </div>
+
+    <script>
+        const statusEl = document.getElementById('status');
+        const spinnerEl = document.getElementById('spinner');
+        const successEl = document.getElementById('success');
+        const countdownEl = document.getElementById('countdown');
+        const infoEl = document.getElementById('info');
+
+        let step = 0;
+        const steps = [
+            'Buscando Service Workers...',
+            'Eliminando Service Workers...',
+            'Limpiando Cache Storage...',
+            'Limpieza completada!',
+            'Redirigiendo...'
+        ];
+
+        function updateStatus(message) {
+            statusEl.textContent = message;
+        }
+
+        async function clearEverything() {
+            // Paso 1: Buscar Service Workers
+            updateStatus(steps[0]);
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // Paso 2: Eliminar Service Workers
+            updateStatus(steps[1]);
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                for (let registration of registrations) {
+                    await registration.unregister();
+                }
+            }
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // Paso 3: Limpiar caches
+            updateStatus(steps[2]);
+            if ('caches' in window) {
+                const names = await caches.keys();
+                for (let name of names) {
+                    await caches.delete(name);
+                }
+            }
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // Paso 4: Completado
+            updateStatus(steps[3]);
+            spinnerEl.style.display = 'none';
+            successEl.style.display = 'block';
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Paso 5: Countdown para redirección
+            updateStatus(steps[4]);
+            infoEl.style.display = 'none';
+
+            for (let i = 3; i > 0; i--) {
+                countdownEl.textContent = i;
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+
+            // Redirigir con cache bust
+            const timestamp = Date.now();
+            window.location.href = `index.html?v=2.0.0&nocache=${timestamp}&cleared=true`;
+        }
+
+        // Iniciar proceso
+        clearEverything().catch(error => {
+            statusEl.textContent = '❌ Error: ' + error.message;
+            spinnerEl.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
