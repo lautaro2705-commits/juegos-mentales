@@ -762,6 +762,16 @@
             <button class="game-btn" data-game="differences">🔍 10 Diferencias</button>
             <button class="game-btn" data-game="minesweeper">💎 Buscaminas</button>
         </div>
+        <div style="text-align: center; margin-top: 16px;">
+            <label style="font-size: 20px; font-weight: 600; color: #2563EB; margin-right: 12px;">Nivel:</label>
+            <select id="levelSelector" style="font-size: 20px; padding: 12px 24px; border: 3px solid #2563EB; border-radius: 8px; background: white; color: #2563EB; font-weight: 600; cursor: pointer;">
+                <option value="1">Nivel 1 - Ciencias</option>
+                <option value="2">Nivel 2 - Cultura</option>
+                <option value="3">Nivel 3 - Geografía</option>
+                <option value="4">Nivel 4 - Historia</option>
+                <option value="5">Nivel 5 - Arte</option>
+            </select>
+        </div>
     </header>
 
     <main>
@@ -851,6 +861,7 @@
         // ESTADO GLOBAL
         // ============================================
         let currentGame = 'crossword';
+        let currentLevel = 1;
 
         // ============================================
         // UTILIDADES GENERALES
@@ -867,7 +878,7 @@
         }
 
         // ============================================
-        // NAVEGACIÓN ENTRE JUEGOS
+        // NAVEGACIÓN ENTRE JUEGOS Y NIVELES
         // ============================================
         document.querySelectorAll('.game-btn').forEach(btn => {
             btn.addEventListener('click', function() {
@@ -892,32 +903,136 @@
             });
         });
 
+        // Selector de niveles
+        document.getElementById('levelSelector').addEventListener('change', function() {
+            currentLevel = parseInt(this.value);
+            crosswordData = crosswordLevels[currentLevel];
+
+            // Reiniciar juegos con el nuevo nivel
+            initCrossword();
+            initDifferences();
+            initMinesweeper();
+
+            showMessage(`¡Nivel ${currentLevel} cargado! Nuevo desafío disponible`);
+        });
+
         // ============================================
-        // CRUCIGRAMA 10x10 AVANZADO
+        // CRUCIGRAMA 10x10 AVANZADO - MÚLTIPLES NIVELES
         // ============================================
-        const crosswordData = {
-            grid: [
-                [' ', ' ', 'M', 'A', 'T', 'E', 'M', 'A', 'T', 'I', 'C', 'A'],
-                [' ', ' ', 'E', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-                [' ', ' ', 'T', ' ', 'F', 'I', 'L', 'O', 'S', 'O', 'F', 'I', 'A'],
-                [' ', ' ', 'A', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-                ['H', 'I', 'S', 'T', 'O', 'R', 'I', 'A', ' ', ' ', ' '],
-                [' ', ' ', 'I', ' ', ' ', ' ', ' ', 'R', ' ', ' ', ' '],
-                [' ', 'A', 'S', 'T', 'R', 'O', 'N', 'O', 'M', 'I', 'A'],
-                [' ', ' ', 'C', ' ', ' ', ' ', ' ', 'N', ' ', ' ', ' '],
-                [' ', 'L', 'I', 'T', 'E', 'R', 'A', 'T', 'U', 'R', 'A'],
-                [' ', ' ', 'A', ' ', ' ', ' ', ' ', 'E', ' ', ' ', ' ']
-            ],
-            words: [
-                { word: 'MATEMATICA', row: 0, col: 2, dir: 'H', num: 1, clue: 'Ciencia del razonamiento lógico y las relaciones cuantitativas' },
-                { word: 'FILOSOFIA', row: 2, col: 4, dir: 'H', num: 2, clue: 'Estudio de problemas fundamentales sobre la existencia, el conocimiento y la ética' },
-                { word: 'HISTORIA', row: 4, col: 0, dir: 'H', num: 3, clue: 'Disciplina que estudia y narra cronológicamente los acontecimientos del pasado' },
-                { word: 'ASTRONOMIA', row: 6, col: 1, dir: 'H', num: 4, clue: 'Ciencia que estudia los cuerpos celestes y el universo' },
-                { word: 'LITERATURA', row: 8, col: 1, dir: 'H', num: 5, clue: 'Arte de la expresión escrita o hablada, especialmente con valor estético' },
-                { word: 'METAFISICA', row: 0, col: 2, dir: 'V', num: 6, clue: 'Rama de la filosofía que estudia la naturaleza de la realidad' },
-                { word: 'ARTE', row: 6, col: 1, dir: 'V', num: 7, clue: 'Manifestación de la actividad humana mediante la cual se expresa la belleza' }
-            ]
+        const crosswordLevels = {
+            1: { // Nivel 1 - Ciencias
+                grid: [
+                    [' ', ' ', 'M', 'A', 'T', 'E', 'M', 'A', 'T', 'I', 'C', 'A'],
+                    [' ', ' ', 'E', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', ' ', 'T', ' ', 'F', 'I', 'S', 'I', 'C', 'A', ' '],
+                    [' ', ' ', 'A', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    ['Q', 'U', 'I', 'M', 'I', 'C', 'A', ' ', ' ', ' ', ' '],
+                    [' ', ' ', 'I', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', 'A', 'S', 'T', 'R', 'O', 'N', 'O', 'M', 'I', 'A'],
+                    [' ', ' ', 'C', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    ['B', 'I', 'O', 'L', 'O', 'G', 'I', 'A', ' ', ' ', ' '],
+                    [' ', ' ', 'A', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+                ],
+                words: [
+                    { word: 'MATEMATICA', row: 0, col: 2, dir: 'H', num: 1, clue: 'Ciencia de los números y las figuras geométricas' },
+                    { word: 'FISICA', row: 2, col: 4, dir: 'H', num: 2, clue: 'Estudia las propiedades de la materia y la energía' },
+                    { word: 'QUIMICA', row: 4, col: 0, dir: 'H', num: 3, clue: 'Ciencia que estudia la composición y transformación de la materia' },
+                    { word: 'ASTRONOMIA', row: 6, col: 1, dir: 'H', num: 4, clue: 'Estudia los astros y el universo' },
+                    { word: 'BIOLOGIA', row: 8, col: 0, dir: 'H', num: 5, clue: 'Ciencia de los seres vivos' },
+                    { word: 'METAFISICA', row: 0, col: 2, dir: 'V', num: 6, clue: 'Rama filosófica sobre la naturaleza de la realidad' }
+                ]
+            },
+            2: { // Nivel 2 - Cultura
+                grid: [
+                    [' ', ' ', 'F', 'I', 'L', 'O', 'S', 'O', 'F', 'I', 'A'],
+                    [' ', ' ', 'I', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', ' ', 'L', ' ', 'M', 'U', 'S', 'I', 'C', 'A', ' '],
+                    [' ', ' ', 'O', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    ['C', 'U', 'L', 'T', 'U', 'R', 'A', ' ', ' ', ' ', ' '],
+                    [' ', ' ', 'O', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', 'L', 'I', 'T', 'E', 'R', 'A', 'T', 'U', 'R', 'A'],
+                    [' ', ' ', 'G', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    ['T', 'E', 'A', 'T', 'R', 'O', ' ', ' ', ' ', ' ', ' '],
+                    [' ', ' ', 'A', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+                ],
+                words: [
+                    { word: 'FILOSOFIA', row: 0, col: 2, dir: 'H', num: 1, clue: 'Amor por la sabiduría y el conocimiento' },
+                    { word: 'MUSICA', row: 2, col: 4, dir: 'H', num: 2, clue: 'Arte de combinar sonidos de manera armoniosa' },
+                    { word: 'CULTURA', row: 4, col: 0, dir: 'H', num: 3, clue: 'Conjunto de conocimientos y tradiciones de un pueblo' },
+                    { word: 'LITERATURA', row: 6, col: 1, dir: 'H', num: 4, clue: 'Arte de la expresión verbal y escrita' },
+                    { word: 'TEATRO', row: 8, col: 0, dir: 'H', num: 5, clue: 'Arte de representar obras dramáticas' },
+                    { word: 'FILOLOGIA', row: 0, col: 2, dir: 'V', num: 6, clue: 'Estudio de textos y lenguas antiguas' }
+                ]
+            },
+            3: { // Nivel 3 - Geografía
+                grid: [
+                    [' ', ' ', 'A', 'M', 'E', 'R', 'I', 'C', 'A', ' ', ' '],
+                    [' ', ' ', 'S', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', ' ', 'I', ' ', 'E', 'U', 'R', 'O', 'P', 'A', ' '],
+                    [' ', ' ', 'A', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    ['C', 'O', 'N', 'T', 'I', 'N', 'E', 'N', 'T', 'E', ' '],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', 'A', 'F', 'R', 'I', 'C', 'A', ' ', ' ', ' ', ' '],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    ['O', 'C', 'E', 'A', 'N', 'I', 'A', ' ', ' ', ' ', ' '],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+                ],
+                words: [
+                    { word: 'AMERICA', row: 0, col: 2, dir: 'H', num: 1, clue: 'Continente del hemisferio occidental' },
+                    { word: 'EUROPA', row: 2, col: 4, dir: 'H', num: 2, clue: 'Continente donde está España, Francia e Italia' },
+                    { word: 'CONTINENTE', row: 4, col: 0, dir: 'H', num: 3, clue: 'Gran extensión de tierra emergida' },
+                    { word: 'AFRICA', row: 6, col: 1, dir: 'H', num: 4, clue: 'Continente cuna de la humanidad' },
+                    { word: 'OCEANIA', row: 8, col: 0, dir: 'H', num: 5, clue: 'Continente donde está Australia' },
+                    { word: 'ASIA', row: 0, col: 2, dir: 'V', num: 6, clue: 'El continente más grande del mundo' }
+                ]
+            },
+            4: { // Nivel 4 - Historia
+                grid: [
+                    [' ', ' ', 'R', 'E', 'N', 'A', 'C', 'I', 'M', 'I', 'E', 'N', 'T', 'O'],
+                    [' ', ' ', 'O', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', ' ', 'M', ' ', 'I', 'M', 'P', 'E', 'R', 'I', 'O'],
+                    [' ', ' ', 'A', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    ['H', 'I', 'S', 'T', 'O', 'R', 'I', 'A', ' ', ' ', ' '],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', 'R', 'E', 'V', 'O', 'L', 'U', 'C', 'I', 'O', 'N'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    ['C', 'I', 'V', 'I', 'L', 'I', 'Z', 'A', 'C', 'I', 'O', 'N'],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+                ],
+                words: [
+                    { word: 'RENACIMIENTO', row: 0, col: 2, dir: 'H', num: 1, clue: 'Período cultural europeo de los siglos XV y XVI' },
+                    { word: 'IMPERIO', row: 2, col: 4, dir: 'H', num: 2, clue: 'Organización política que domina varios territorios' },
+                    { word: 'HISTORIA', row: 4, col: 0, dir: 'H', num: 3, clue: 'Ciencia que estudia el pasado de la humanidad' },
+                    { word: 'REVOLUCION', row: 6, col: 1, dir: 'H', num: 4, clue: 'Cambio radical en la estructura social o política' },
+                    { word: 'CIVILIZACION', row: 8, col: 0, dir: 'H', num: 5, clue: 'Sociedad compleja con desarrollo cultural avanzado' },
+                    { word: 'ROMA', row: 0, col: 2, dir: 'V', num: 6, clue: 'Ciudad eterna del antiguo imperio' }
+                ]
+            },
+            5: { // Nivel 5 - Arte
+                grid: [
+                    [' ', ' ', 'P', 'I', 'N', 'T', 'U', 'R', 'A', ' ', ' '],
+                    [' ', ' ', 'I', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', ' ', 'N', ' ', 'E', 'S', 'C', 'U', 'L', 'T', 'U', 'R', 'A'],
+                    [' ', ' ', 'T', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    ['A', 'R', 'T', 'E', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', ' ', 'U', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', 'A', 'R', 'Q', 'U', 'I', 'T', 'E', 'C', 'T', 'U', 'R', 'A'],
+                    [' ', ' ', 'A', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    ['D', 'I', 'S', 'E', 'N', 'O', ' ', ' ', ' ', ' ', ' '],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+                ],
+                words: [
+                    { word: 'PINTURA', row: 0, col: 2, dir: 'H', num: 1, clue: 'Arte de representar imágenes con pigmentos' },
+                    { word: 'ESCULTURA', row: 2, col: 4, dir: 'H', num: 2, clue: 'Arte de modelar o tallar figuras tridimensionales' },
+                    { word: 'ARTE', row: 4, col: 0, dir: 'H', num: 3, clue: 'Expresión de creatividad y belleza humana' },
+                    { word: 'ARQUITECTURA', row: 6, col: 1, dir: 'H', num: 4, clue: 'Arte de diseñar y construir edificios' },
+                    { word: 'DISENO', row: 8, col: 0, dir: 'H', num: 5, clue: 'Planificación creativa de objetos funcionales' },
+                    { word: 'PINTURA', row: 0, col: 2, dir: 'V', num: 6, clue: 'Obra realizada con pinceles y colores' }
+                ]
+            }
         };
+
+        let crosswordData = crosswordLevels[1];
 
         let currentWord = null;
         let crosswordState = {};
@@ -1195,26 +1310,37 @@
         }
 
         function createHouse(container, houseNum) {
+            // Variaciones según nivel
+            const levelVariations = {
+                1: { sunSmall: true, cloud4: true, chimneyShort: true, handleLeft: true },
+                2: { treeRight: true, flowerLeft: true, mailboxLeft: true, flagDown: true },
+                3: { sunSmall: true, windowOpen: true, stoneBrown: true, cloud4: true },
+                4: { chimneyShort: true, handleLeft: true, treeRight: true, mailboxLeft: true },
+                5: { sunSmall: true, treeRight: true, stoneBrown: true, windowOpen: true }
+            };
+
+            const vars = levelVariations[currentLevel] || levelVariations[1];
+
             container.innerHTML = `
                 <div class="sky"></div>
                 <div class="ground"></div>
 
-                <div class="sun ${houseNum === 2 ? 'sun-small' : ''}"></div>
+                <div class="sun ${houseNum === 2 && vars.sunSmall ? 'sun-small' : ''}"></div>
 
                 <div class="cloud cloud1"></div>
                 <div class="cloud cloud2"></div>
                 <div class="cloud cloud3"></div>
-                ${houseNum === 2 ? '<div class="cloud cloud4"></div>' : ''}
+                ${houseNum === 2 && vars.cloud4 ? '<div class="cloud cloud4"></div>' : ''}
 
                 <div class="roof"></div>
-                <div class="chimney ${houseNum === 2 ? 'chimney-short' : ''}">
+                <div class="chimney ${houseNum === 2 && vars.chimneyShort ? 'chimney-short' : ''}">
                     <div class="smoke"></div>
                 </div>
 
                 <div class="house-body"></div>
 
                 <div class="door door-red">
-                    <div class="door-handle ${houseNum === 2 ? 'handle-left' : ''}"></div>
+                    <div class="door-handle ${houseNum === 2 && vars.handleLeft ? 'handle-left' : ''}"></div>
                 </div>
 
                 <div class="window window-left">
@@ -1222,9 +1348,9 @@
                     <div class="curtain curtain-right"></div>
                 </div>
 
-                <div class="window window-right ${houseNum === 2 ? 'window-open' : ''}"></div>
+                <div class="window window-right ${houseNum === 2 && vars.windowOpen ? 'window-open' : ''}"></div>
 
-                <div class="tree ${houseNum === 2 ? 'tree-right' : ''}">
+                <div class="tree ${houseNum === 2 && vars.treeRight ? 'tree-right' : ''}">
                     <div class="leaves">
                         <div class="apple apple1"></div>
                         <div class="apple apple2"></div>
@@ -1233,19 +1359,19 @@
                     <div class="trunk"></div>
                 </div>
 
-                <div class="flower ${houseNum === 2 ? 'flower-left' : ''}">
+                <div class="flower ${houseNum === 2 && vars.flowerLeft ? 'flower-left' : ''}">
                     <div class="petals"></div>
                     <div class="stem"></div>
                 </div>
 
                 <div class="path">
-                    <div class="stone ${houseNum === 1 ? 'stone-gray' : 'stone-brown'}"></div>
-                    <div class="stone ${houseNum === 1 ? 'stone-gray' : 'stone-brown'}"></div>
-                    <div class="stone ${houseNum === 1 ? 'stone-gray' : 'stone-brown'}"></div>
+                    <div class="stone ${houseNum === 1 || !vars.stoneBrown ? 'stone-gray' : 'stone-brown'}"></div>
+                    <div class="stone ${houseNum === 1 || !vars.stoneBrown ? 'stone-gray' : 'stone-brown'}"></div>
+                    <div class="stone ${houseNum === 1 || !vars.stoneBrown ? 'stone-gray' : 'stone-brown'}"></div>
                 </div>
 
-                <div class="mailbox ${houseNum === 2 ? 'mailbox-left' : ''}">
-                    <div class="mailbox-flag ${houseNum === 2 ? 'flag-down' : ''}"></div>
+                <div class="mailbox ${houseNum === 2 && vars.mailboxLeft ? 'mailbox-left' : ''}">
+                    <div class="mailbox-flag ${houseNum === 2 && vars.flagDown ? 'flag-down' : ''}"></div>
                 </div>
             `;
 
