@@ -805,7 +805,10 @@
 
         <!-- LAS 10 DIFERENCIAS -->
         <section id="differences" class="game-container hidden">
-            <h2 class="game-title">Encuentra las 10 Diferencias Sutiles</h2>
+            <h2 class="game-title">Encuentra las 10 Diferencias - Desafío Avanzado</h2>
+            <p style="text-align: center; font-size: 18px; color: #6B7280; margin-bottom: 16px;">
+                ⚠️ Diferencias muy sutiles: tamaños, posiciones y proporciones ligeramente diferentes
+            </p>
             <div class="differences-counter" id="differencesCounter">Diferencias encontradas: 0 / 10</div>
             <div class="differences-layout">
                 <div class="house-container" id="house1"></div>
@@ -1308,19 +1311,19 @@
         }
 
         // ============================================
-        // LAS 10 DIFERENCIAS (SUTILES)
+        // LAS 10 DIFERENCIAS (SUTILES PARA ADULTOS)
         // ============================================
         const differences = [
-            { id: 'sun-size', house: 2, desc: 'Sol más pequeño' },
-            { id: 'cloud4', house: 2, desc: 'Nube adicional' },
-            { id: 'chimney-height', house: 2, desc: 'Chimenea más corta' },
-            { id: 'door-handle', house: 2, desc: 'Manija de puerta al otro lado' },
-            { id: 'tree-position', house: 2, desc: 'Árbol en posición diferente' },
-            { id: 'flower-position', house: 2, desc: 'Flor en posición diferente' },
-            { id: 'mailbox-position', house: 2, desc: 'Buzón en posición diferente' },
-            { id: 'mailbox-flag', house: 2, desc: 'Bandera del buzón hacia abajo' },
-            { id: 'path-color', house: 2, desc: 'Color del camino' },
-            { id: 'window-state', house: 2, desc: 'Ventana con estado diferente' }
+            { id: 'sun', house: 2, desc: 'Tamaño del sol ligeramente diferente' },
+            { id: 'cloud1', house: 2, desc: 'Posición de nube izquierda' },
+            { id: 'chimney', house: 2, desc: 'Altura de chimenea' },
+            { id: 'door-handle', house: 2, desc: 'Posición de la manija' },
+            { id: 'tree', house: 2, desc: 'Altura del árbol' },
+            { id: 'leaves', house: 2, desc: 'Tamaño del follaje' },
+            { id: 'petals', house: 2, desc: 'Tamaño de la flor' },
+            { id: 'house-body', house: 2, desc: 'Ancho de la casa' },
+            { id: 'window-left', house: 2, desc: 'Ancho de ventana izquierda' },
+            { id: 'roof', house: 2, desc: 'Inclinación del techo' }
         ];
 
         let foundDifferences = new Set();
@@ -1345,13 +1348,68 @@
         }
 
         function createHouse(container, houseNum) {
-            // Variaciones según nivel
+            // Variaciones sutiles según nivel - MÁS DIFÍCILES PARA ADULTOS
             const levelVariations = {
-                1: { sunSmall: true, cloud4: true, chimneyShort: true, handleLeft: true },
-                2: { treeRight: true, flowerLeft: true, mailboxLeft: true, flagDown: true },
-                3: { sunSmall: true, windowOpen: true, stoneBrown: true, cloud4: true },
-                4: { chimneyShort: true, handleLeft: true, treeRight: true, mailboxLeft: true },
-                5: { sunSmall: true, treeRight: true, stoneBrown: true, windowOpen: true }
+                1: {
+                    sunSize: houseNum === 2 ? '50px' : '55px',
+                    cloud1Left: houseNum === 2 ? '65px' : '60px',
+                    chimneyHeight: houseNum === 2 ? '60px' : '65px',
+                    handleRight: houseNum === 2 ? '10px' : '8px',
+                    windowLeftWidth: houseNum === 2 ? '50px' : '52px',
+                    treeBottom: houseNum === 2 ? '72px' : '75px',
+                    roofBorder: houseNum === 2 ? '100px' : '105px',
+                    smokeSize: houseNum === 2 ? '18px' : '20px',
+                    doorHeight: houseNum === 2 ? '92px' : '95px',
+                    petalSize: houseNum === 2 ? '24px' : '26px'
+                },
+                2: {
+                    sunSize: houseNum === 2 ? '52px' : '55px',
+                    cloud2Width: houseNum === 2 ? '75px' : '70px',
+                    chimneyWidth: houseNum === 2 ? '30px' : '32px',
+                    houseWidth: houseNum === 2 ? '265px' : '270px',
+                    windowRightHeight: houseNum === 2 ? '50px' : '52px',
+                    leavesSize: houseNum === 2 ? '62px' : '65px',
+                    mailboxHeight: houseNum === 2 ? '40px' : '42px',
+                    pathWidth: houseNum === 2 ? '62px' : '65px',
+                    doorWidth: houseNum === 2 ? '63px' : '65px',
+                    stemHeight: houseNum === 2 ? '30px' : '32px'
+                },
+                3: {
+                    sunSize: houseNum === 2 ? '53px' : '55px',
+                    cloud3Top: houseNum === 2 ? '125px' : '120px',
+                    roofLeft: houseNum === 2 ? '145px' : '150px',
+                    windowLeftBottom: houseNum === 2 ? '217px' : '215px',
+                    trunkWidth: houseNum === 2 ? '20px' : '22px',
+                    chimneyBottom: houseNum === 2 ? '378px' : '375px',
+                    houseBottom: houseNum === 2 ? '128px' : '130px',
+                    doorBorder: houseNum === 2 ? '2px' : '3px',
+                    appleSize: houseNum === 2 ? '11px' : '10px',
+                    flagWidth: houseNum === 2 ? '14px' : '13px'
+                },
+                4: {
+                    sunSize: houseNum === 2 ? '54px' : '55px',
+                    cloud1Height: houseNum === 2 ? '32px' : '35px',
+                    houseHeight: houseNum === 2 ? '185px' : '190px',
+                    windowRightBottom: houseNum === 2 ? '217px' : '215px',
+                    leavesLeft: houseNum === 2 ? '-20px' : '-21px',
+                    chimneyTransform: houseNum === 2 ? '-72px' : '-75px',
+                    doorRadius: houseNum === 2 ? '6px' : '8px',
+                    stoneHeight: houseNum === 2 ? '9px' : '8px',
+                    petalLeft: houseNum === 2 ? '-10px' : '-11px',
+                    mailboxWidth: houseNum === 2 ? '30px' : '32px'
+                },
+                5: {
+                    sunSize: houseNum === 2 ? '53px' : '55px',
+                    cloud2Left: houseNum === 2 ? '255px' : '250px',
+                    roofBorder: houseNum === 2 ? '103px' : '105px',
+                    windowLeftLeft: houseNum === 2 ? '112px' : '110px',
+                    trunkHeight: houseNum === 2 ? '43px' : '45px',
+                    houseBodyBorder: houseNum === 2 ? '2px' : '3px',
+                    handleSize: houseNum === 2 ? '9px' : '8px',
+                    appleTop1: houseNum === 2 ? '16px' : '15px',
+                    smokeLeft: houseNum === 2 ? '7px' : '6px',
+                    stemWidth: houseNum === 2 ? '5px' : '4px'
+                }
             };
 
             const vars = levelVariations[currentLevel] || levelVariations[1];
@@ -1360,68 +1418,68 @@
                 <div class="sky"></div>
                 <div class="ground"></div>
 
-                <div class="sun ${houseNum === 2 && vars.sunSmall ? 'sun-small' : ''}"></div>
+                <div class="sun" style="width: ${vars.sunSize || '55px'}; height: ${vars.sunSize || '55px'};"></div>
 
-                <div class="cloud cloud1"></div>
-                <div class="cloud cloud2"></div>
-                <div class="cloud cloud3"></div>
-                ${houseNum === 2 && vars.cloud4 ? '<div class="cloud cloud4"></div>' : ''}
+                <div class="cloud cloud1" style="left: ${vars.cloud1Left || '60px'}; height: ${vars.cloud1Height || '35px'};"></div>
+                <div class="cloud cloud2" style="left: ${vars.cloud2Left || '250px'}; width: ${vars.cloud2Width || '70px'};"></div>
+                <div class="cloud cloud3" style="top: ${vars.cloud3Top || '120px'};"></div>
 
-                <div class="roof"></div>
-                <div class="chimney ${houseNum === 2 && vars.chimneyShort ? 'chimney-short' : ''}">
-                    <div class="smoke"></div>
+                <div class="roof" style="border-bottom: ${vars.roofBorder || '105px'} solid #8B0000; border-left: ${vars.roofLeft || '150px'} solid transparent; border-right: ${vars.roofLeft || '150px'} solid transparent;"></div>
+
+                <div class="chimney" style="width: ${vars.chimneyWidth || '32px'}; height: ${vars.chimneyHeight || '65px'}; bottom: ${vars.chimneyBottom || '375px'}; transform: translateX(${vars.chimneyTransform || '-75px'});">
+                    <div class="smoke" style="width: ${vars.smokeSize || '20px'}; height: ${vars.smokeSize || '20px'}; left: ${vars.smokeLeft || '6px'};"></div>
                 </div>
 
-                <div class="house-body"></div>
+                <div class="house-body" style="width: ${vars.houseWidth || '270px'}; height: ${vars.houseHeight || '190px'}; bottom: ${vars.houseBottom || '130px'}; border: ${vars.houseBodyBorder || '3px'} solid #8B4513;"></div>
 
-                <div class="door door-red">
-                    <div class="door-handle ${houseNum === 2 && vars.handleLeft ? 'handle-left' : ''}"></div>
+                <div class="door door-red" style="width: ${vars.doorWidth || '65px'}; height: ${vars.doorHeight || '95px'}; border-radius: ${vars.doorRadius || '8px'} ${vars.doorRadius || '8px'} 0 0; border: ${vars.doorBorder || '3px'} solid #4A3015;">
+                    <div class="door-handle" style="right: ${vars.handleRight || '8px'}; width: ${vars.handleSize || '8px'}; height: ${vars.handleSize || '8px'};"></div>
                 </div>
 
-                <div class="window window-left">
+                <div class="window window-left" style="width: ${vars.windowLeftWidth || '52px'}; bottom: ${vars.windowLeftBottom || '215px'}; left: ${vars.windowLeftLeft || '110px'};">
                     <div class="curtain curtain-left"></div>
                     <div class="curtain curtain-right"></div>
                 </div>
 
-                <div class="window window-right ${houseNum === 2 && vars.windowOpen ? 'window-open' : ''}"></div>
+                <div class="window window-right" style="height: ${vars.windowRightHeight || '52px'}; bottom: ${vars.windowRightBottom || '215px'};"></div>
 
-                <div class="tree ${houseNum === 2 && vars.treeRight ? 'tree-right' : ''}">
-                    <div class="leaves">
-                        <div class="apple apple1"></div>
-                        <div class="apple apple2"></div>
-                        <div class="apple apple3"></div>
+                <div class="tree" style="bottom: ${vars.treeBottom || '75px'};">
+                    <div class="leaves" style="width: ${vars.leavesSize || '65px'}; height: ${vars.leavesSize || '65px'}; left: ${vars.leavesLeft || '-21px'};">
+                        <div class="apple apple1" style="width: ${vars.appleSize || '10px'}; height: ${vars.appleSize || '10px'}; top: ${vars.appleTop1 || '15px'};"></div>
+                        <div class="apple apple2" style="width: ${vars.appleSize || '10px'}; height: ${vars.appleSize || '10px'};"></div>
+                        <div class="apple apple3" style="width: ${vars.appleSize || '10px'}; height: ${vars.appleSize || '10px'};"></div>
                     </div>
-                    <div class="trunk"></div>
+                    <div class="trunk" style="width: ${vars.trunkWidth || '22px'}; height: ${vars.trunkHeight || '45px'};"></div>
                 </div>
 
-                <div class="flower ${houseNum === 2 && vars.flowerLeft ? 'flower-left' : ''}">
-                    <div class="petals"></div>
-                    <div class="stem"></div>
+                <div class="flower">
+                    <div class="petals" style="width: ${vars.petalSize || '26px'}; height: ${vars.petalSize || '26px'}; left: ${vars.petalLeft || '-11px'};"></div>
+                    <div class="stem" style="width: ${vars.stemWidth || '4px'}; height: ${vars.stemHeight || '32px'};"></div>
                 </div>
 
-                <div class="path">
-                    <div class="stone ${houseNum === 1 || !vars.stoneBrown ? 'stone-gray' : 'stone-brown'}"></div>
-                    <div class="stone ${houseNum === 1 || !vars.stoneBrown ? 'stone-gray' : 'stone-brown'}"></div>
-                    <div class="stone ${houseNum === 1 || !vars.stoneBrown ? 'stone-gray' : 'stone-brown'}"></div>
+                <div class="path" style="width: ${vars.pathWidth || '65px'};">
+                    <div class="stone stone-gray" style="height: ${vars.stoneHeight || '8px'};"></div>
+                    <div class="stone stone-gray" style="height: ${vars.stoneHeight || '8px'};"></div>
+                    <div class="stone stone-gray" style="height: ${vars.stoneHeight || '8px'};"></div>
                 </div>
 
-                <div class="mailbox ${houseNum === 2 && vars.mailboxLeft ? 'mailbox-left' : ''}">
-                    <div class="mailbox-flag ${houseNum === 2 && vars.flagDown ? 'flag-down' : ''}"></div>
+                <div class="mailbox" style="width: ${vars.mailboxWidth || '32px'}; height: ${vars.mailboxHeight || '42px'};">
+                    <div class="mailbox-flag" style="width: ${vars.flagWidth || '13px'};"></div>
                 </div>
             `;
 
             if (houseNum === 2) {
                 differenceElements.push(
-                    { id: 'sun-size', element: container.querySelector('.sun'), house: 2 },
-                    { id: 'cloud4', element: container.querySelector('.cloud4'), house: 2 },
-                    { id: 'chimney-height', element: container.querySelector('.chimney'), house: 2 },
+                    { id: 'sun', element: container.querySelector('.sun'), house: 2 },
+                    { id: 'cloud1', element: container.querySelector('.cloud1'), house: 2 },
+                    { id: 'chimney', element: container.querySelector('.chimney'), house: 2 },
                     { id: 'door-handle', element: container.querySelector('.door-handle'), house: 2 },
-                    { id: 'tree-position', element: container.querySelector('.tree'), house: 2 },
-                    { id: 'flower-position', element: container.querySelector('.flower'), house: 2 },
-                    { id: 'mailbox-position', element: container.querySelector('.mailbox'), house: 2 },
-                    { id: 'mailbox-flag', element: container.querySelector('.mailbox-flag'), house: 2 },
-                    { id: 'path-color', element: container.querySelector('.path'), house: 2 },
-                    { id: 'window-state', element: container.querySelector('.window-right'), house: 2 }
+                    { id: 'tree', element: container.querySelector('.tree'), house: 2 },
+                    { id: 'leaves', element: container.querySelector('.leaves'), house: 2 },
+                    { id: 'petals', element: container.querySelector('.petals'), house: 2 },
+                    { id: 'house-body', element: container.querySelector('.house-body'), house: 2 },
+                    { id: 'window-left', element: container.querySelector('.window-left'), house: 2 },
+                    { id: 'roof', element: container.querySelector('.roof'), house: 2 }
                 );
             }
         }
