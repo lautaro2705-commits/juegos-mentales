@@ -1,0 +1,11 @@
+{
+  "name": "messi-platformer",
+  "version": "1.0.0",
+  "description": "Juego de plataformas 2D estilo Mario Bros con temática de fútbol argentino",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
