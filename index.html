@@ -775,6 +775,7 @@
             <button class="game-btn active" data-game="crossword">📝 Crucigrama</button>
             <button class="game-btn" data-game="differences">🔍 10 Diferencias</button>
             <button class="game-btn" data-game="minesweeper">💎 Buscaminas</button>
+            <button class="game-btn" data-game="snake">🐍 Snake</button>
         </div>
         <div style="text-align: center; margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap;">
             <div style="font-size: 22px; font-weight: 700; color: #2563EB; background: #DBEAFE; padding: 12px 24px; border-radius: 8px; border: 3px solid #2563EB;">
@@ -857,6 +858,45 @@
                 <button class="btn btn-reset" onclick="resetMinesweeper()">🔄 Reiniciar</button>
             </div>
         </section>
+        <!-- SNAKE -->
+        <section id="snake" class="game-container hidden">
+            <h2 class="game-title">Snake Clásico</h2>
+            <div style="display: flex; justify-content: center; gap: 24px; margin-bottom: 16px; flex-wrap: wrap;">
+                <div style="font-size: 20px; font-weight: 700; color: var(--color-primario); background: #DBEAFE; padding: 10px 20px; border-radius: 8px;">
+                    Puntos: <span id="snakeScore">0</span>
+                </div>
+                <div style="font-size: 20px; font-weight: 700; color: #6B7280; background: #F3F4F6; padding: 10px 20px; border-radius: 8px;">
+                    Récord: <span id="snakeHighScore">0</span>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <canvas id="snakeCanvas" width="400" height="400" style="border: 3px solid var(--color-primario); border-radius: 8px; background: #F0FDF4; display: block; margin: 0 auto; max-width: 100%;"></canvas>
+                <div id="snakeOverlay" style="display: none; position: relative; margin-top: -200px; margin-bottom: 200px; text-align: center;">
+                    <div style="background: rgba(0,0,0,0.75); color: white; padding: 24px; border-radius: 12px; display: inline-block;">
+                        <div id="snakeOverlayTitle" style="font-size: 28px; font-weight: 700; margin-bottom: 8px;">Game Over</div>
+                        <div id="snakeOverlayScore" style="font-size: 20px; margin-bottom: 16px;"></div>
+                        <button class="btn btn-primary" onclick="snakeStart()">Jugar</button>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: center; margin-top: 16px;">
+                <div style="display: grid; grid-template-columns: repeat(3, 56px); grid-template-rows: repeat(3, 56px); gap: 4px;">
+                    <div></div>
+                    <button class="btn btn-primary" style="min-height:auto; padding:0; font-size:24px;" onclick="snakeSetDir(0,-1)">&#9650;</button>
+                    <div></div>
+                    <button class="btn btn-primary" style="min-height:auto; padding:0; font-size:24px;" onclick="snakeSetDir(-1,0)">&#9664;</button>
+                    <button class="btn btn-primary" style="min-height:auto; padding:0; font-size:24px;" onclick="snakePause()">&#9646;&#9646;</button>
+                    <button class="btn btn-primary" style="min-height:auto; padding:0; font-size:24px;" onclick="snakeSetDir(1,0)">&#9654;</button>
+                    <div></div>
+                    <button class="btn btn-primary" style="min-height:auto; padding:0; font-size:24px;" onclick="snakeSetDir(0,1)">&#9660;</button>
+                    <div></div>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="snakeStart()">&#9654; Jugar</button>
+                <button class="btn btn-reset" onclick="snakeReset()">🔄 Reiniciar</button>
+            </div>
+        </section>
     </main>
 
     <footer>
@@ -930,7 +970,8 @@
                 const welcomeMessages = {
                     crossword: '¡Desafío literario y cultural! 📝',
                     differences: '¡Pon a prueba tu percepción visual! 🔍',
-                    minesweeper: '¡Lógica y estrategia avanzada! 💎'
+                    minesweeper: '¡Lógica y estrategia avanzada! 💎',
+                    snake: '¡Reflejos y estrategia! 🐍'
                 };
                 showMessage(welcomeMessages[game]);
             });
@@ -1944,6 +1985,198 @@
         }
 
         // ============================================
+        // SNAKE CLÁSICO
+        // ============================================
+        const SNAKE_COLS = 20;
+        const SNAKE_ROWS = 20;
+        const SNAKE_TICK_MS = 150;
+        let snakeCanvas, snakeCtx, snakeCellSize;
+        let snakeState = null; // { snake, dir, nextDir, food, score, running, paused, intervalId }
+        let snakeHighScore = parseInt(localStorage.getItem('snakeHighScore') || '0', 10);
+
+        function snakeCreateState() {
+            const mid = Math.floor(SNAKE_ROWS / 2);
+            const state = {
+                snake: [{x: 5, y: mid}, {x: 4, y: mid}, {x: 3, y: mid}],
+                dir: {x: 1, y: 0},
+                nextDir: {x: 1, y: 0},
+                food: null,
+                score: 0,
+                running: false,
+                paused: false,
+                intervalId: null
+            };
+            state.food = snakePlaceFood(state.snake);
+            return state;
+        }
+
+        function snakePlaceFood(snake) {
+            const occupied = new Set(snake.map(s => s.x + ',' + s.y));
+            const free = [];
+            for (let x = 0; x < SNAKE_COLS; x++) {
+                for (let y = 0; y < SNAKE_ROWS; y++) {
+                    if (!occupied.has(x + ',' + y)) free.push({x, y});
+                }
+            }
+            return free.length > 0 ? free[Math.floor(Math.random() * free.length)] : null;
+        }
+
+        function snakeTick() {
+            if (!snakeState || !snakeState.running || snakeState.paused) return;
+            const s = snakeState;
+            s.dir = s.nextDir;
+            const head = {x: s.snake[0].x + s.dir.x, y: s.snake[0].y + s.dir.y};
+
+            // Wall collision
+            if (head.x < 0 || head.x >= SNAKE_COLS || head.y < 0 || head.y >= SNAKE_ROWS) {
+                return snakeGameOver();
+            }
+            // Self collision
+            for (let i = 0; i < s.snake.length; i++) {
+                if (s.snake[i].x === head.x && s.snake[i].y === head.y) {
+                    return snakeGameOver();
+                }
+            }
+
+            s.snake.unshift(head);
+
+            if (s.food && head.x === s.food.x && head.y === s.food.y) {
+                s.score += 10;
+                s.food = snakePlaceFood(s.snake);
+                document.getElementById('snakeScore').textContent = s.score;
+            } else {
+                s.snake.pop();
+            }
+
+            snakeDraw();
+        }
+
+        function snakeGameOver() {
+            snakeState.running = false;
+            if (snakeState.intervalId) clearInterval(snakeState.intervalId);
+            if (snakeState.score > snakeHighScore) {
+                snakeHighScore = snakeState.score;
+                localStorage.setItem('snakeHighScore', snakeHighScore);
+                document.getElementById('snakeHighScore').textContent = snakeHighScore;
+            }
+            const overlay = document.getElementById('snakeOverlay');
+            document.getElementById('snakeOverlayTitle').textContent = 'Game Over';
+            document.getElementById('snakeOverlayScore').textContent = 'Puntos: ' + snakeState.score;
+            overlay.style.display = 'block';
+            showMessage('Game Over - Puntos: ' + snakeState.score);
+        }
+
+        function snakeDraw() {
+            if (!snakeCtx || !snakeState) return;
+            const ctx = snakeCtx;
+            const cs = snakeCellSize;
+            ctx.clearRect(0, 0, snakeCanvas.width, snakeCanvas.height);
+
+            // Grid lines
+            ctx.strokeStyle = '#E5E7EB';
+            ctx.lineWidth = 0.5;
+            for (let x = 0; x <= SNAKE_COLS; x++) {
+                ctx.beginPath(); ctx.moveTo(x * cs, 0); ctx.lineTo(x * cs, SNAKE_ROWS * cs); ctx.stroke();
+            }
+            for (let y = 0; y <= SNAKE_ROWS; y++) {
+                ctx.beginPath(); ctx.moveTo(0, y * cs); ctx.lineTo(SNAKE_COLS * cs, y * cs); ctx.stroke();
+            }
+
+            // Food
+            if (snakeState.food) {
+                ctx.fillStyle = '#EF4444';
+                ctx.beginPath();
+                ctx.arc(snakeState.food.x * cs + cs / 2, snakeState.food.y * cs + cs / 2, cs / 2.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Snake
+            snakeState.snake.forEach((seg, i) => {
+                ctx.fillStyle = i === 0 ? '#166534' : '#22C55E';
+                ctx.fillRect(seg.x * cs + 1, seg.y * cs + 1, cs - 2, cs - 2);
+                ctx.strokeStyle = '#15803D';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(seg.x * cs + 1, seg.y * cs + 1, cs - 2, cs - 2);
+            });
+
+            // Paused overlay
+            if (snakeState.paused) {
+                ctx.fillStyle = 'rgba(0,0,0,0.4)';
+                ctx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 28px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('PAUSA', snakeCanvas.width / 2, snakeCanvas.height / 2);
+            }
+        }
+
+        function snakeStart() {
+            document.getElementById('snakeOverlay').style.display = 'none';
+            if (snakeState && snakeState.intervalId) clearInterval(snakeState.intervalId);
+            snakeState = snakeCreateState();
+            snakeState.running = true;
+            snakeState.intervalId = setInterval(snakeTick, SNAKE_TICK_MS);
+            document.getElementById('snakeScore').textContent = '0';
+            document.getElementById('snakeHighScore').textContent = snakeHighScore;
+            snakeDraw();
+            showMessage('¡Snake iniciado! Usa las flechas o WASD 🐍');
+        }
+
+        function snakeReset() {
+            if (snakeState && snakeState.intervalId) clearInterval(snakeState.intervalId);
+            snakeState = snakeCreateState();
+            document.getElementById('snakeScore').textContent = '0';
+            document.getElementById('snakeOverlay').style.display = 'none';
+            snakeDraw();
+            showMessage('Snake reiniciado');
+        }
+
+        function snakePause() {
+            if (!snakeState || !snakeState.running) return;
+            snakeState.paused = !snakeState.paused;
+            snakeDraw();
+            showMessage(snakeState.paused ? 'Juego en pausa' : '¡Continuamos!');
+        }
+
+        function snakeSetDir(dx, dy) {
+            if (!snakeState || !snakeState.running || snakeState.paused) return;
+            // Prevent reversing
+            if (snakeState.dir.x === -dx && snakeState.dir.y === -dy) return;
+            snakeState.nextDir = {x: dx, y: dy};
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (currentGame !== 'snake' || !snakeState) return;
+            const keyMap = {
+                'ArrowUp': [0, -1], 'ArrowDown': [0, 1], 'ArrowLeft': [-1, 0], 'ArrowRight': [1, 0],
+                'w': [0, -1], 's': [0, 1], 'a': [-1, 0], 'd': [1, 0],
+                'W': [0, -1], 'S': [0, 1], 'A': [-1, 0], 'D': [1, 0]
+            };
+            if (keyMap[e.key]) {
+                e.preventDefault();
+                snakeSetDir(keyMap[e.key][0], keyMap[e.key][1]);
+            }
+            if (e.key === 'p' || e.key === 'P' || e.key === ' ') {
+                e.preventDefault();
+                snakePause();
+            }
+        });
+
+        function initSnake() {
+            snakeCanvas = document.getElementById('snakeCanvas');
+            snakeCtx = snakeCanvas.getContext('2d');
+            snakeCellSize = snakeCanvas.width / SNAKE_COLS;
+            snakeState = snakeCreateState();
+            document.getElementById('snakeHighScore').textContent = snakeHighScore;
+            // Show start overlay
+            const overlay = document.getElementById('snakeOverlay');
+            document.getElementById('snakeOverlayTitle').textContent = '🐍 Snake';
+            document.getElementById('snakeOverlayScore').textContent = 'Pulsa Jugar para empezar';
+            overlay.style.display = 'block';
+            snakeDraw();
+        }
+
+        // ============================================
         // INICIALIZACIÓN
         // ============================================
         document.addEventListener('DOMContentLoaded', () => {
@@ -1954,6 +2187,7 @@
             initCrossword();
             initDifferences();
             initMinesweeper();
+            initSnake();
 
             const levelNames = {
                 1: 'Ciencias',
