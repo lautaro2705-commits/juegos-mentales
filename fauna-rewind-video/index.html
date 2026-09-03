@@ -1,0 +1,301 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Fauna Rewind</title>
+<style>
+@font-face{font-family:'Anton';src:url(fonts/Anton.woff2) format('woff2')}
+@font-face{font-family:'Bebas';src:url(fonts/Bebas_Neue.woff2) format('woff2')}
+@font-face{font-family:'VT';src:url(fonts/VT323.woff2) format('woff2')}
+@font-face{font-family:'Pinyon';src:url(fonts/Pinyon_Script.woff2) format('woff2')}
+@font-face{font-family:'Mono';src:url(fonts/Space_Mono.woff2) format('woff2');font-weight:700}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#000;width:1080px;height:1920px;overflow:hidden}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:#07060d}
+#world{position:absolute;inset:0;background:#07060d;transform-origin:50% 50%;overflow:hidden}
+.abs{position:absolute}
+/* ---------- guest check paper ---------- */
+#paper{position:absolute;inset:0;opacity:0;
+  background:
+    linear-gradient(180deg,rgba(10,8,25,.15),rgba(10,8,25,.55) 70%,rgba(10,8,25,.9)),
+    repeating-linear-gradient(90deg,rgba(45,70,140,.38) 0 2px,transparent 2px 54px),
+    repeating-linear-gradient(0deg,rgba(45,70,140,.38) 0 2px,transparent 2px 62px),
+    linear-gradient(180deg,#b3b8c9 0%,#9599ac 45%,#5e6178 100%);}
+#paper .script{position:absolute;left:60px;top:150px;font:200px 'Pinyon';color:#1c2450;opacity:.55;letter-spacing:.01em;white-space:nowrap}
+#paper .hdr{position:absolute;left:0;right:0;top:420px;display:flex;justify-content:space-around;font:38px 'Bebas';letter-spacing:.12em;color:#1c2450;opacity:.6}
+#paper .num{position:absolute;right:120px;top:475px;font:700 64px 'Mono';color:#c8203a;opacity:.7;letter-spacing:.06em}
+#paper .hline{position:absolute;left:0;right:0;top:470px;height:4px;background:rgba(28,36,80,.5)}
+#paper .frame{position:absolute;inset:60px 50px;border:2px solid rgba(240,170,80,.55);border-radius:6px}
+/* ---------- disco ball ---------- */
+#disco{position:absolute;left:50%;top:0;width:640px;height:640px;margin-left:-320px;transform-origin:50% -600px}
+#disco .string{position:absolute;left:50%;top:-1000px;width:3px;height:1010px;background:linear-gradient(#0000,#ccc);margin-left:-1px}
+#disco .ball{position:absolute;inset:0;border-radius:50%;overflow:hidden;background:#111;box-shadow:0 0 120px rgba(255,220,180,.25)}
+#disco canvas{position:absolute;inset:0;width:640px;height:640px}
+#disco .shade{position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle at 38% 32%,rgba(255,255,255,.35) 0%,rgba(255,255,255,0) 30%,rgba(0,0,0,0) 60%,rgba(0,0,0,.55) 100%)}
+#disco .ring{position:absolute;left:50%;top:-14px;width:60px;height:34px;margin-left:-30px;border-radius:30px 30px 6px 6px;background:linear-gradient(#e8e8e8,#777)}
+.glint{position:absolute;width:40px;height:40px;margin:-20px 0 0 -20px;
+  background:radial-gradient(circle,#fff 0 12%,rgba(255,255,255,0) 40%),
+   linear-gradient(#fff,#fff) 50% 50%/100% 3px no-repeat,linear-gradient(#fff,#fff) 50% 50%/3px 100% no-repeat}
+#specks{position:absolute;inset:0;overflow:hidden}
+.sp{position:absolute;border-radius:2px}
+/* ---------- cassette ---------- */
+#cassette{position:absolute;left:50%;top:50%;width:780px;height:490px;margin:-245px 0 0 -390px;transform-origin:50% 50%}
+#cassette .body{position:absolute;inset:0;border-radius:26px;background:linear-gradient(160deg,#242040,#100e1e 60%,#1a1730);
+  box-shadow:inset 0 0 0 3px #3a3560,inset 0 -12px 30px rgba(0,0,0,.6),0 30px 80px rgba(0,0,0,.7)}
+#cassette .label{position:absolute;left:36px;right:36px;top:34px;height:300px;border-radius:12px;
+  background:linear-gradient(180deg,#f3ad57,#ec9a3f);box-shadow:inset 0 0 0 3px #2a1a3a,inset 0 0 40px rgba(120,60,0,.25)}
+#cassette .strip{position:absolute;left:0;right:0;top:0;height:64px;border-bottom:3px solid #2a1a3a;display:flex;align-items:center;justify-content:space-between;padding:0 30px;font:700 24px 'Mono';color:#1d1530;letter-spacing:.14em}
+#cassette .side{background:#f6c945;color:#1d1530;padding:6px 20px;border-radius:4px;font:34px 'Bebas';letter-spacing:.2em;box-shadow:0 3px 0 #2a1a3a}
+#cassette .win{position:absolute;left:60px;right:60px;top:92px;height:150px;border-radius:80px;background:#0a0914;box-shadow:inset 0 0 0 4px #2a1a3a,inset 0 8px 20px #000}
+#cassette .tape{position:absolute;left:150px;right:150px;top:52px;height:46px;background:linear-gradient(#2a1810,#4a2c1a,#2a1810);}
+#cassette .reel{position:absolute;top:75px;width:0;height:0}
+#cassette .reel.l{left:120px}#cassette .reel.r{right:120px}
+#cassette .pack{position:absolute;left:50%;top:50%;border-radius:50%;background:radial-gradient(circle,#3a2415 0,#2b1a0e 40%,#1d1108 100%);transform:translate(-50%,-50%);box-shadow:0 0 0 1px #000}
+#cassette .hub{position:absolute;left:50%;top:50%;width:72px;height:72px;margin:-36px 0 0 -36px;border-radius:50%;
+  background:radial-gradient(circle,#0a0914 0 12px,#f2f2f2 13px 22px,#0a0914 23px 26px,transparent 27px),repeating-conic-gradient(#f2f2f2 0 30deg,#0a0914 30deg 60deg)}
+#cassette .lbl2{position:absolute;left:0;right:0;bottom:16px;text-align:center;font:26px 'Bebas';letter-spacing:.5em;color:#1d1530;opacity:.85}
+#cassette .screw{position:absolute;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle,#666 0 30%,#222 32% 100%);box-shadow:inset 0 0 0 2px #000}
+#cassette .foot{position:absolute;left:170px;right:170px;bottom:0;height:88px;background:linear-gradient(#1a1730,#0c0b18);clip-path:polygon(0 100%,8% 0,92% 0,100% 100%);border-top:3px solid #3a3560}
+#cassette .hole{position:absolute;bottom:26px;width:34px;height:34px;border-radius:50%;background:#000;box-shadow:inset 0 0 0 3px #2a2745}
+#cassette .arrows{position:absolute;left:0;right:0;bottom:104px;text-align:center;font:26px 'VT';color:#8b86b8;letter-spacing:.3em}
+/* ---------- REWIND logo ---------- */
+#logo{position:absolute;left:0;right:0;top:640px;height:520px;transform-origin:50% 50%}
+#logo .word{position:absolute;left:0;right:0;top:0;text-align:center;font:290px 'Anton';line-height:1;letter-spacing:.005em;transform:skewX(-9deg);white-space:nowrap}
+#logo .L{position:relative;display:inline-block;transform-origin:50% 70%}
+#logo .L i{font-style:normal;display:block}
+#logo .L i.c{position:absolute;inset:0;opacity:0}
+#logo .L i.c.r{color:#ff0040}#logo .L i.c.b{color:#00e5ff}
+#logo .L i.s{position:absolute;inset:0;color:#211a48;-webkit-text-stroke:16px #211a48;
+  text-shadow:6px 6px 0 #211a48,12px 12px 0 #211a48,18px 18px 0 #1a1438,24px 24px 0 #120e28,30px 30px 40px rgba(0,0,0,.6)}
+#logo .L i.f{position:relative;background:linear-gradient(180deg,#ff2f9a 0%,#ff4d7d 35%,#ff8a3d 65%,#ffc043 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+#logo .swoosh{position:absolute;left:0;top:330px;width:1080px;height:120px}
+#tag{position:absolute;left:0;right:0;top:1150px;text-align:center;font:44px 'Bebas';letter-spacing:.62em;color:#f4ece0;text-shadow:0 0 14px rgba(255,120,60,.6),0 2px 0 #000;padding-left:.62em}
+/* ---------- ticket card ---------- */
+#card{position:absolute;left:50%;top:50%;width:900px;height:640px;margin:-320px 0 0 -450px;transform-origin:50% 50%;
+  background:linear-gradient(170deg,#f5b25c,#ee9c42 60%,#e78f3a);border-radius:10px;box-shadow:inset 0 0 0 4px #2a1a3a,inset 0 0 0 10px #ee9c42,inset 0 0 0 12px #2a1a3a,0 40px 90px rgba(0,0,0,.7);padding:60px 64px;color:#1d1530}
+#card .perf{position:absolute;left:0;right:0;top:-16px;height:32px;background:radial-gradient(circle at 20px 16px,#07060d 11px,transparent 12px) 0 0/40px 32px repeat-x}
+#card .crow{display:flex;justify-content:space-between;padding-right:110px;font:700 26px 'Mono';letter-spacing:.18em;margin-top:6px}
+#card .rule{height:3px;background:#2a1a3a;margin:26px 0}
+#card .date{font:700 92px 'Mono';letter-spacing:.02em;line-height:1;margin-top:10px}
+#card .sub{font:30px 'Bebas';letter-spacing:.42em;margin-top:26px;opacity:.9}
+#card .dj{position:absolute;right:70px;bottom:74px;font:64px 'Anton';line-height:.95;text-align:right;color:#e0206c;letter-spacing:.04em;transform:rotate(-5deg);transform-origin:80% 50%;
+  text-shadow:0 0 1px #e0206c;opacity:.95;mix-blend-mode:multiply}
+#card .vinyl{position:absolute;right:64px;top:44px;width:74px;height:74px;border-radius:50%;
+  background:radial-gradient(circle,#ee9c42 0 6px,#2a1a3a 7px 12px,#ee9c42 13px 15px,#2a1a3a 16px 18px,#ee9c42 19px 21px,#2a1a3a 22px 24px,#ee9c42 25px 27px,#2a1a3a 28px 30px,#ee9c42 31px 33px,#2a1a3a 34px 37px);}
+#card .vinyl:after{content:"";position:absolute;left:50%;top:0;width:3px;height:37px;margin-left:-1px;background:#ee9c42}
+#card .small{position:absolute;left:64px;bottom:70px;font:700 22px 'Mono';letter-spacing:.2em;opacity:.8}
+/* ---------- fauna ---------- */
+#fauna{position:absolute;left:50%;top:50%;width:1000px;margin-left:-500px;transform:translateY(-50%);transform-origin:50% 50%;mix-blend-mode:screen}
+#fauna img{width:100%;display:block}
+.claw{position:absolute;left:50%;top:50%;width:900px;height:7px;margin:-3px 0 0 -450px;background:linear-gradient(90deg,transparent,#fff 30%,#ffd0e0 70%,transparent);filter:blur(2px);transform-origin:50% 50%;opacity:0}
+/* ---------- overlays ---------- */
+#flash{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 20%,rgba(255,240,220,.9),rgba(255,200,160,.2) 40%,transparent 70%);opacity:0;pointer-events:none}
+#hit{position:absolute;inset:0;background:#fff;opacity:0}
+#red{position:absolute;inset:0;background:#e0206c;opacity:0;mix-blend-mode:screen}
+#osd{position:absolute;left:70px;top:90px;font:70px 'VT';color:#f2f2f2;text-shadow:0 0 6px rgba(255,255,255,.8),3px 0 0 rgba(255,0,80,.5),-3px 0 0 rgba(0,229,255,.5);letter-spacing:.04em;white-space:nowrap}
+#osd2{position:absolute;right:70px;top:90px;font:70px 'VT';color:#f2f2f2;text-shadow:0 0 6px rgba(255,255,255,.8),3px 0 0 rgba(255,0,80,.5),-3px 0 0 rgba(0,229,255,.5);letter-spacing:.06em;white-space:nowrap;text-align:right}
+#osd3{position:absolute;left:70px;bottom:90px;font:40px 'VT';color:#f2f2f2;opacity:.7;letter-spacing:.1em;white-space:nowrap}
+#noise{position:absolute;inset:0;width:1080px;height:1920px;mix-blend-mode:screen;pointer-events:none}
+#scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 3px,transparent 3px 6px);pointer-events:none}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 45%,rgba(0,0,0,.55) 100%);pointer-events:none}
+#crt{position:absolute;inset:0;background:#000;opacity:0}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><filter id="chroma" color-interpolation-filters="sRGB" x="0" y="0" width="100%" height="100%">
+<feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/>
+<feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/>
+<feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/>
+<feOffset id="offr" in="r" dx="-10" dy="0" result="ro"/><feOffset id="offb" in="b" dx="10" dy="0" result="bo"/>
+<feBlend in="ro" in2="g" mode="screen" result="rg"/><feBlend in="rg" in2="bo" mode="screen"/></filter></svg>
+<div id="stage">
+ <div id="world">
+  <div id="paper"><div class="frame"></div><div class="script">Guest Check</div><div class="hline"></div>
+   <div class="hdr"><span>SERVER</span><span>TABLE</span><span>GUESTS</span><span>CHECK NUMBER</span></div><div class="num">1989</div></div>
+  <div id="glowA" style="position:absolute;inset:0;opacity:0;background:radial-gradient(ellipse at 50% 55%,rgba(240,120,60,.28),rgba(200,40,120,.12) 35%,transparent 65%)"></div><div id="specks"></div>
+  <div id="flash"></div>
+  <div id="disco"><div class="string"></div><div class="ring"></div><div class="ball"><canvas id="dcv" width="640" height="640"></canvas><div class="shade"></div><div class="glints"></div></div></div>
+  <div id="logo"><div class="word"></div>
+   <svg class="swoosh" viewBox="0 0 1080 120"><defs><linearGradient id="sg" x1="0" x2="1"><stop offset="0" stop-color="#ff2f9a"/><stop offset="1" stop-color="#ffc043"/></linearGradient></defs>
+    <polygon points="90,20 1000,10 980,34 120,44" fill="url(#sg)"/><polygon points="200,52 900,46 880,66 230,72" fill="url(#sg)" opacity=".85"/><polygon points="330,82 760,78 745,94 350,98" fill="url(#sg)" opacity=".7"/></svg></div>
+  <div id="tag"></div>
+  <div id="cassette"><div class="body">
+   <div class="label"><div class="strip"><span>REWIND RECORDS</span><span class="side">SIDE A</span><span>RW-026</span></div>
+    <div class="win"><div class="tape"></div><div class="reel l"><div class="pack"></div><div class="hub"></div></div><div class="reel r"><div class="pack"></div><div class="hub"></div></div></div>
+    <div class="lbl2">A NIGHT TO RELIVE</div></div>
+   <div class="screw" style="left:16px;top:16px"></div><div class="screw" style="right:16px;top:16px"></div><div class="screw" style="left:16px;bottom:16px"></div><div class="screw" style="right:16px;bottom:16px"></div>
+   <div class="arrows">◄◄ ◄◄ ◄◄</div>
+   <div class="foot"><div class="hole" style="left:40px"></div><div class="hole" style="right:40px"></div><div class="hole" style="left:50%;margin-left:-17px;width:60px;border-radius:17px"></div></div>
+  </div></div>
+  <div id="card"><div class="perf"></div><div class="vinyl"></div>
+   <div class="crow"><span>REWIND RECORDS</span><span>PLAY ►</span></div><div class="rule"></div>
+   <div class="date">SATURDAY<br>26 / 09</div><div class="sub">PASEO DEL BUEN PASTOR</div>
+   <div class="small">SIDE A / KEEP THIS TAPE</div>
+   <div class="dj">DJ LITO<br>QUINTEROS</div></div>
+  <div id="fauna"><img src="assets/fauna-logo.png"></div>
+  <div class="claw" id="c1"></div><div class="claw" id="c2"></div><div class="claw" id="c3"></div>
+  <div id="hit"></div><div id="red"></div>
+ </div>
+ <div id="osd"></div><div id="osd2"></div><div id="osd3"></div>
+ <canvas id="noise" width="1080" height="1920"></canvas>
+ <div id="scan"></div><div id="vig"></div><div id="crt"></div>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,u)=>a+(b-a)*u;
+const seg=(t,a,b)=>clamp((t-a)/(b-a));
+const eoc=u=>1-Math.pow(1-u,3), eic=u=>u*u*u, eoq=u=>1-(1-u)*(1-u);
+const eob=u=>{const c=1.70158;return 1+(c+1)*Math.pow(u-1,3)+c*Math.pow(u-1,2)};
+const ebounce=u=>{const n=7.5625,d=2.75;if(u<1/d)return n*u*u;if(u<2/d)return n*(u-=1.5/d)*u+.75;if(u<2.5/d)return n*(u-=2.25/d)*u+.9375;return n*(u-=2.625/d)*u+.984375};
+function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const FPS=30,BPM=118,BEAT=60/BPM,T0=3.0;
+const LOGO="REWIND",TAG="A NIGHT TO RELIVE",CHARS="ABCDEFGHJKLMNPQRSTUVWXYZ0123456789#%&*";
+let tileR=[],dctx,specks=[],reelAng=[],noiseCtx,nbuf,nimg,glints=[];
+function init(){
+  // logo letters
+  const w=$('#logo .word');w.innerHTML=[...LOGO].map(ch=>`<span class="L"><i class="c r">${ch}</i><i class="c b">${ch}</i><i class="s">${ch}</i><i class="f">${ch}</i></span>`).join('');
+  // specks
+  const r=rng(42);const cols=['#fff','#ffe6c8','#ffb7d5','#ffd08a','#bfe9ff'];
+  const sc=$('#specks');
+  for(let i=0;i<90;i++){const d=document.createElement('div');d.className='sp';
+    const s={x:r()*1200,y:r()*1920,w:8+r()*26,h:6+r()*18,c:cols[Math.floor(r()*cols.length)],v:60+r()*140,o:.25+r()*.6,ph:r()*6.28,el:d};
+    d.style.width=s.w+'px';d.style.height=s.h+'px';d.style.background=s.c;d.style.top=s.y+'px';d.style.boxShadow=`0 0 12px ${s.c}`;sc.appendChild(d);specks.push(s)}
+  // disco ball tile randomness
+  const tr=rng(9);for(let r=0;r<40;r++){tileR[r]=[];for(let i=0;i<70;i++)tileR[r][i]=tr()}
+  dctx=$('#dcv').getContext('2d');
+  // glints
+  const gl=$('#disco .glints');for(let i=0;i<7;i++){const d=document.createElement('div');d.className='glint';gl.appendChild(d);glints.push(d)}
+  // reel angle table (rewind: accelerate, hold, stop at 2.78)
+  let a=0;for(let f=0;f<=FPS*3;f++){const t=f/FPS;let v=0;if(t<2.78){v=1500*eoq(seg(t,.25,1.2))}reelAng[f]=a;a+=v/FPS}
+  noiseCtx=$('#noise').getContext('2d');nbuf=document.createElement('canvas');nbuf.width=270;nbuf.height=480;nimg=nbuf.getContext('2d').createImageData(270,480);
+}
+function drawDisco(rot,kick){
+  const ctx=dctx;ctx.clearRect(0,0,640,640);const R=318,cx=320,cy=320,D=Math.PI/180;
+  const L=[-0.42,0.55,0.72];const ln=Math.hypot(...L);L[0]/=ln;L[1]/=ln;L[2]/=ln;
+  let row=0;
+  for(let la=-87;la<87;la+=6,row++){const lat0=la*D,lat1=lat0+6*D,latc=lat0+3*D;
+    const n=Math.max(6,Math.round(62*Math.cos(latc)));const dl=2*Math.PI/n;const off=(row%2)*dl/2;
+    for(let i=0;i<n;i++){const lon0=i*dl+off+rot,lon1=lon0+dl,lonc=lon0+dl/2;
+      const nz=Math.cos(latc)*Math.cos(lonc);if(nz<=0.03)continue;
+      const nx=Math.cos(latc)*Math.sin(lonc),ny=Math.sin(latc);
+      const pts=[[lat0,lon0],[lat0,lon1],[lat1,lon1],[lat1,lon0]].map(([a,o])=>[cx+R*Math.cos(a)*Math.sin(o),cy-R*Math.sin(a)]);
+      const mx=(pts[0][0]+pts[1][0]+pts[2][0]+pts[3][0])/4,my=(pts[0][1]+pts[1][1]+pts[2][1]+pts[3][1])/4;
+      const r=tileR[row][i%70];const diff=Math.max(0,nx*L[0]+ny*L[1]+nz*L[2]);
+      const spec=Math.pow(diff,14);
+      let v=0.18+0.32*r+0.55*diff+0.5*spec*(r>.4?1:.3)+0.12*kick;v=Math.min(1,v);
+      let col;if(r>.972)col=`rgb(${255},${255},${255})`;
+      else if(r>.945)col=`rgb(${Math.round(255*v)},${Math.round(150*v)},${Math.round(200*v)})`;
+      else if(r>.92)col=`rgb(${Math.round(255*v)},${Math.round(190*v)},${Math.round(110*v)})`;
+      else col=`rgb(${Math.round(235*v)},${Math.round(238*v)},${Math.round(250*v)})`;
+      ctx.fillStyle=col;ctx.beginPath();pts.forEach((p,k)=>{const x=mx+(p[0]-mx)*.86,y=my+(p[1]-my)*.86;k?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.closePath();ctx.fill();
+    }}
+}
+function noise(t,amt,g,fr){
+  const ctx=noiseCtx;ctx.clearRect(0,0,1080,1920);if(amt<=0&&g<=0)return;
+  const r=rng(fr*7919+17);const d=nimg.data;const A=Math.round(amt*255);
+  for(let i=0;i<d.length;i+=4){const v=r()*255;d[i]=v;d[i+1]=v;d[i+2]=v;d[i+3]=A}
+  nbuf.getContext('2d').putImageData(nimg,0,0);ctx.imageSmoothingEnabled=false;ctx.drawImage(nbuf,0,0,1080,1920);
+  if(g>0){ // tracking bars
+    const n=2+Math.floor(r()*3);for(let i=0;i<n;i++){const y=((t*900+i*700)%2100)-100,h=14+r()*70;
+      ctx.globalAlpha=.55*g;ctx.drawImage(nbuf,0,r()*400,270,h/4,r()*30-15,y,1100,h);ctx.globalAlpha=.9*g;ctx.fillStyle='#fff';ctx.fillRect(0,y+h,1080,3)}
+    ctx.globalAlpha=1}
+}
+function glitchAmt(t){
+  let g=0;const w=(a,b,v)=>{if(t>=a&&t<b)g=Math.max(g,v)};
+  w(0,.3,.8);w(2.78,3.06,1);w(6.5,6.62,.9);w(10.48,10.63,1);w(13.44,13.56,.8);w(14.72,14.82,.5);
+  if(t>T0&&t<13.4){const b=(t-T0)/BEAT;const fb=Math.floor(b);if(fb%4===2&&b-fb<.08)g=Math.max(g,.3)}
+  return g;
+}
+function seek(t){
+  const fr=Math.round(t*FPS);const R=rng(fr*104729+3);
+  const world=$('#world');
+  const beat=(t-T0)/BEAT,kick=t>=T0?Math.exp(-(beat%1)*7):0;
+  const g=glitchAmt(t);
+  // ------- scenes -------
+  const sA=t<3.0, sB=t>=3.0&&t<6.56, sC=t>=6.56&&t<10.55, sD=t>=10.55&&t<13.5, sE=t>=13.5;
+  // world transform: push zoom + jitter + beat
+  let sc=1,tx=0,ty=0;
+  if(t>=T0&&t<10.55)sc=1+0.07*seg(t,T0,10.55);
+  if(t>=10.55&&t<13.5)sc=1+0.04*seg(t,10.55,13.5);
+  if(t>=T0&&t<13.5)sc*=1+0.012*kick;
+  if(g>0){tx=(R()-.5)*60*g;ty=(R()-.5)*16*g;if(R()<.5*g)sc*=1+(R()-.5)*.06}
+  world.style.transform=`translate(${tx}px,${ty}px) scale(${sc})`;
+  world.style.filter=g>0?'url(#chroma)':'none';
+  $('#offr').setAttribute('dx',-14*g);$('#offb').setAttribute('dx',14*g);
+  world.style.background=sD?'#0b0816':'#07060d';
+  // paper
+  const paper=$('#paper');paper.style.opacity=sB||sC?1:(sD?.28:0);
+  // ------- cassette -------
+  const cas=$('#cassette');
+  if(sA){cas.style.opacity=1;const u=eob(seg(t,.08,.7));const y=lerp(700,0,u);
+    let js=1,rot=0;if(t>=2.78&&t<2.95){const k=seg(t,2.78,2.95);js=1+.035*(1-k);rot=-1.2*(1-k)}
+    cas.style.transform=`translateY(${y}px) rotate(${-4+rot}deg) scale(${js*1.12})`;$('#glowA').style.opacity=seg(t,.2,.9)*(.8+.2*Math.sin(t*30));
+    const ang=reelAng[Math.min(fr,reelAng.length-1)];
+    const rw=seg(t,.3,2.78);const dl=lerp(88,152,rw),dr=lerp(152,88,rw);
+    cas.querySelectorAll('.hub').forEach(h=>h.style.transform=`rotate(${-ang}deg)`);
+    const pk=cas.querySelectorAll('.pack');pk[0].style.width=pk[0].style.height=dl+'px';pk[1].style.width=pk[1].style.height=dr+'px';
+    cas.querySelector('.arrows').style.opacity=(t<2.78&&Math.floor(t*6)%2===0)?1:.25;
+  }else{cas.style.opacity=0;$('#glowA').style.opacity=0}
+  // ------- disco ball -------
+  const disco=$('#disco');
+  if(t>=3.0&&t<13.5){disco.style.opacity=1;
+    const drop=ebounce(seg(t,3.0,4.1));const top=lerp(-760,420,drop);
+    const sway=Math.sin((t-3)*1.1)*2.2;
+    disco.style.transform=`translateY(${top}px) rotate(${sway}deg)`;
+    drawDisco((t-3)*0.42,kick);
+    const gr=rng(Math.floor(t*6)*31+5);glints.forEach((d,i)=>{const a=gr()*6.283,rr=Math.sqrt(gr())*300;d.style.left=320+Math.cos(a)*rr+'px';d.style.top=320+Math.sin(a)*rr+'px';d.style.opacity=(.4+gr()*.6)*(1-drop*0+1)*.7;d.style.transform=`scale(${.4+gr()*1.1}) rotate(${gr()*90}deg)`});
+    disco.style.filter=sD?'brightness(.55)':'none';
+    if(sD){disco.style.transform=`translateY(${lerp(420,-300,eic(seg(t,10.55,11.6)))}px) rotate(${sway}deg)`}
+  }else disco.style.opacity=0;
+  // specks
+  const spOn=t>=3.2&&t<13.5;$('#specks').style.opacity=spOn?seg(t,3.2,3.9)*(sD?.6:1):0;
+  if(spOn)specks.forEach(s=>{s.el.style.left=(((s.x+(t-3)*s.v)%1200)-60)+'px';s.el.style.opacity=s.o*(.6+.4*Math.sin(t*9+s.ph))*(1+.6*kick)});
+  // beat flash
+  $('#flash').style.opacity=(t>=T0&&t<13.4)?.22*kick:0;
+  // ------- logo -------
+  const logo=$('#logo');
+  if(t>=6.56&&t<10.55){logo.style.opacity=1;
+    logo.querySelectorAll('.L').forEach((L,i)=>{const st=6.56+i*.055;const u=eob(seg(t,st,st+.34));const pre=t<st;
+      L.style.opacity=pre?0:1;L.style.transform=`scale(${lerp(3.2,1,u)}) translateY(${lerp(-40,0,u)}px)`;
+      const ca=(1-seg(t,st,st+.5))*(pre?0:1)+(g*.8);
+      const cs=L.querySelectorAll('.c');cs[0].style.opacity=cs[1].style.opacity=clamp(ca)*.9;
+      cs[0].style.transform=`translateX(${-18*ca}px)`;cs[1].style.transform=`translateX(${18*ca}px)`;
+      const bj=(beat%1<.07&&Math.floor(beat)%2===0)?(R()-.5)*6:0;L.style.marginLeft=bj+'px'});
+    const sw=$('#logo .swoosh');sw.style.clipPath=`inset(0 ${100-100*eoc(seg(t,6.95,7.4))}% 0 0)`;
+    const bump=1+.03*kick;logo.style.transform=`scale(${bump})`;
+  }else logo.style.opacity=0;
+  // tagline scramble
+  const tag=$('#tag');
+  if(t>=7.25&&t<10.55){tag.style.opacity=1;const sr=rng(Math.floor(t*15)*17+1);
+    tag.textContent=[...TAG].map((ch,i)=>{if(ch===' ')return ' ';const settle=7.35+i*.05;if(t<settle-.35)return ' ';return t>=settle?ch:CHARS[Math.floor(sr()*CHARS.length)]}).join('')}
+  else tag.style.opacity=0;
+  // ------- card -------
+  const card=$('#card');
+  if(sD){card.style.opacity=1;const u=eob(seg(t,10.58,11.05));
+    card.style.transform=`translateY(${lerp(1100,0,u)}px) rotate(${lerp(6,-2.5,u)}deg) scale(${1+.015*kick})`;
+    card.querySelector('.vinyl').style.transform=`rotate(${(t-10.5)*240}deg)`;
+    const dj=card.querySelector('.dj');const du=seg(t,11.55,11.72);dj.style.opacity=t<11.55?0:.95;dj.style.transform=`rotate(-5deg) scale(${lerp(2.6,1,eic(du))})`;
+    $('#hit').style.opacity=(t>=11.55&&t<11.62)?.25:0;
+  }else{card.style.opacity=0}
+  // ------- fauna -------
+  const fa=$('#fauna');
+  if(sE){fa.style.opacity=1;const u=eoc(seg(t,13.5,13.9));fa.style.transform=`translateY(-50%) scale(${lerp(1.35,1,u)*(1+.05*kick)})`;
+    fa.style.filter=`brightness(${1+1.4*(1-u)})`;
+    $('#red').style.opacity=.9*(1-seg(t,13.5,13.75));
+    [['#c1',13.56],['#c2',13.62],['#c3',13.68]].forEach(([id,st],i)=>{const cl=$(id);const k=seg(t,st,st+.28);cl.style.opacity=k>0&&k<1?Math.sin(k*Math.PI):0;
+      cl.style.transform=`translate(${lerp(420,-420,k)}px,${lerp(-300,300,k)+ (i-1)*70}px) rotate(-32deg) scaleX(${.5+k})`});
+  }else{fa.style.opacity=0;$('#red').style.opacity=0;['#c1','#c2','#c3'].forEach(id=>$(id).style.opacity=0)}
+  if(!(t>=11.55&&t<11.62))$('#hit').style.opacity=(t>=13.5&&t<13.56)?.6:0;
+  // ------- OSD -------
+  const osd=$('#osd'),osd2=$('#osd2'),osd3=$('#osd3');
+  let o='',o2='',o3='';
+  if(t<2.78){o=Math.floor(t*5)%2===0?'◄◄ REW':' ';const yr=Math.round(lerp(2026,1989,eoq(seg(t,.35,2.7))));o2=String(yr);o3='SP  TAPE 1  RW-026'}
+  else if(t<2.95){o='■ STOP';o2='1989';o3='SP  TAPE 1  RW-026'}
+  else if(t<5.2){o=t<4.6||Math.floor(t*6)%2===0?'► PLAY':' ';o2='1989';o3=t<4.0?'SP  TAPE 1  RW-026':''}
+  else if(t>=14.7){o='■ STOP';}
+  osd.textContent=o;osd2.textContent=o2;osd3.textContent=o3;
+  // ------- noise / crt -------
+  let amt=0.07;if(t<.3)amt=.75;else if(t<2.78)amt=.16;else if(t<3.06)amt=.5;else if(sD)amt=.06;else if(sE)amt=.05;
+  amt+=g*.3;noise(t,amt,g,fr);
+  const crt=$('#crt');if(t>=14.8){const k=seg(t,14.8,14.96);$('#stage').style.transform=`scaleY(${lerp(1,.004,eic(k))}) scaleX(${lerp(1,0,seg(t,14.94,15.0))})`;$('#stage').style.filter=`brightness(${1+2*k})`;crt.style.opacity=seg(t,14.97,15.0)}
+  else{$('#stage').style.transform='none';$('#stage').style.filter='none';crt.style.opacity=0}
+}
+window.init=init;window.seek=seek;
+</script></body></html>
